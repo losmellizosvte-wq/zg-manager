@@ -1,50 +1,69 @@
 import { NextResponse } from 'next/server';
-import { getApps, initializeApp, applicationDefault, cert } from 'firebase-admin/app';
-import { getFirestore } from 'firebase-admin/firestore';
+import { adminFirestore, adminMessaging } from '@/lib/firebase-admin';
+import { startOfDay, isBefore } from 'date-fns';
 
 export async function GET(request: Request) {
+  const { searchParams } = new URL(request.url);
+  const secret = searchParams.get('secret');
+
+  // Simple hardcoded secret for the cron job (in a real app, use env vars)
+  if (secret !== 'zgm-cron-secret-2026') {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  }
+
   try {
-    const { searchParams } = new URL(request.url);
-    const token = searchParams.get('token');
+    // 1. Fetch pending tasks
+    const tasksSnapshot = await adminFirestore.collection('tasks').where('isCompleted', '==', false).get();
+    let pendingCount = 0;
+    let overdueCount = 0;
+    const today = startOfDay(new Date());
 
-    // Secure the endpoint with a simple shared secret token
-    if (token !== process.env.CRON_SECRET) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-    }
-
-    if (!getApps().length) {
-      initializeApp({
-        credential: applicationDefault()
-      });
-    }
-
-    const db = getFirestore();
-    const tasksRef = db.collection('tasks');
-    
-    // Purge tasks completed more than 48 hours ago
-    const fortyEightHoursAgo = new Date(Date.now() - 48 * 60 * 60 * 1000);
-    
-    const snapshot = await tasksRef
-      .where('isCompleted', '==', true)
-      .where('completedAt', '<', fortyEightHoursAgo)
-      .get();
-
-    const batch = db.batch();
-    snapshot.docs.forEach((doc) => {
-      batch.delete(doc.ref);
+    tasksSnapshot.forEach(doc => {
+      const data = doc.data();
+      const dueDate = data.dueDate ? data.dueDate.toDate() : null;
+      pendingCount++;
+      if (dueDate && isBefore(dueDate, today)) {
+        overdueCount++;
+      }
     });
 
-    if (snapshot.size > 0) {
-      await batch.commit();
+    if (pendingCount === 0) {
+      return NextResponse.json({ success: true, message: 'No tasks to notify' });
     }
 
+    const messageBody = `Tienes ${pendingCount} tareas pendientes` + (overdueCount > 0 ? ` (${overdueCount} atrasadas).` : '.');
+
+    // 2. Fetch all FCM tokens
+    const tokensSnapshot = await adminFirestore.collection('fcmTokens').get();
+    const tokens: string[] = [];
+    tokensSnapshot.forEach(doc => {
+      const data = doc.data();
+      if (data.token) tokens.push(data.token);
+    });
+
+    if (tokens.length === 0) {
+      return NextResponse.json({ success: true, message: 'No devices registered for push notifications' });
+    }
+
+    // 3. Send multicast message
+    const message = {
+      notification: {
+        title: 'ZG Manager - Resumen Diario',
+        body: messageBody,
+      },
+      tokens: tokens,
+    };
+
+    const response = await adminMessaging.sendEachForMulticast(message);
+    
     return NextResponse.json({ 
       success: true, 
-      purgedCount: snapshot.size,
-      message: `Purged ${snapshot.size} tasks.`
+      notifiedDevices: response.successCount,
+      failedDevices: response.failureCount 
     });
+
   } catch (error: any) {
-    console.error('Error purging tasks:', error);
+    console.error('Error in cron task:', error);
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
 }

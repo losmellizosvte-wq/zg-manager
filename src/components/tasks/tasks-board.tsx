@@ -41,7 +41,7 @@ interface TasksBoardProps {
 
 function TaskColumn({ title, tasks, onToggleTask }: { title: string; tasks: Task[]; onToggleTask: (id: string) => void }) {
   return (
-    <div className="w-[320px] flex-shrink-0 flex flex-col gap-4">
+    <div className="w-full md:w-[320px] flex-shrink-0 flex flex-col gap-4">
       <div className="flex items-center justify-between px-2">
         <h2 className="text-lg font-semibold text-foreground/80">{title}</h2>
         <span className="px-2 py-0.5 text-sm font-semibold rounded-md bg-primary/10 text-primary">
@@ -116,7 +116,7 @@ export function TasksBoard({ initialTasks, executives, onAddTask, onToggleTask }
         </div>
 
         {/* Board - this is the main container for the columns */}
-        <div className="flex-1 flex gap-6 overflow-x-auto pb-4">
+        <div className="flex-1 flex flex-col md:flex-row gap-6 md:overflow-x-auto overflow-y-auto pb-4">
             <TaskColumn title="Pendientes" tasks={pendingTasks} onToggleTask={onToggleTask} />
             <TaskColumn title="Atrasadas" tasks={overdueTasks} onToggleTask={onToggleTask} />
             <TaskColumn title="Completadas Recientes" tasks={completedTasks} onToggleTask={onToggleTask} />

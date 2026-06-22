@@ -9,9 +9,9 @@ import { useState, useEffect } from "react";
 import { collection, query, orderBy, limit, onSnapshot } from "firebase/firestore";
 import { useFirebase } from "@/firebase";
 import { GlobalCalculatorSheet } from "@/components/calculator/global-calculator-sheet";
+import { NotificationPrompt } from "@/components/layout/notification-prompt";
 
 export function AppHeader() {
-  useFCM(); // Initialize FCM and request permissions
   const { firestore } = useFirebase();
   const [alerts, setAlerts] = useState<{ id: string, title: string, body: string, isRead: boolean }[]>([]);
   
@@ -34,6 +34,7 @@ export function AppHeader() {
         <FullLogo />
       </div>
       <div className="flex w-full items-center justify-end gap-2">
+        <NotificationPrompt />
         <GlobalCalculatorSheet />
         <Popover>
           <PopoverTrigger className="relative p-2 rounded-full hover:bg-slate-100 transition-colors">

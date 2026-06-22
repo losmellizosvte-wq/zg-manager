@@ -105,17 +105,17 @@ export default function TareasPage() {
                 <Skeleton className="h-10 w-1/2" />
                 <Skeleton className="h-4 w-3/4 mt-2" />
             </div>
-            <div className="flex-1 flex gap-6 overflow-x-auto pb-4">
-                <div className="flex flex-col gap-4 min-w-[300px] flex-1">
+            <div className="flex-1 flex flex-col md:flex-row gap-6 md:overflow-x-auto overflow-y-auto pb-4">
+                <div className="flex flex-col gap-4 w-full md:w-[320px] flex-shrink-0">
                     <Skeleton className="h-8 w-1/3" />
                     <Skeleton className="h-24 w-full" />
                     <Skeleton className="h-24 w-full" />
                 </div>
-                 <div className="flex flex-col gap-4 min-w-[300px] flex-1">
+                 <div className="flex flex-col gap-4 w-full md:w-[320px] flex-shrink-0">
                     <Skeleton className="h-8 w-1/3" />
                     <Skeleton className="h-24 w-full" />
                 </div>
-                 <div className="flex flex-col gap-4 min-w-[300px] flex-1">
+                 <div className="flex flex-col gap-4 w-full md:w-[320px] flex-shrink-0">
                     <Skeleton className="h-8 w-1/3" />
                     <Skeleton className="h-24 w-full" />
                 </div>

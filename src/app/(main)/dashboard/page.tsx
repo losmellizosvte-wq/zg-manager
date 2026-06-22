@@ -96,7 +96,7 @@ export default function DashboardPage() {
     return {
         remainingToCoverThisMonth,
         totalChequesNextMonth,
-        pendingInvoicesAmountThisMonth,
+        totalEmitidosThisMonth,
         emitidosThisMonth,
     };
   }, [allCheques, allInvoices]);
@@ -110,7 +110,7 @@ export default function DashboardPage() {
   const { 
     remainingToCoverThisMonth,
     totalChequesNextMonth,
-    pendingInvoicesAmountThisMonth,
+    totalEmitidosThisMonth,
     emitidosThisMonth
   } = dashboardData!;
   
@@ -125,7 +125,7 @@ export default function DashboardPage() {
       />
       
       <StatsCards 
-        pendingInvoicesAmountThisMonth={pendingInvoicesAmountThisMonth}
+        totalEmitidosThisMonth={totalEmitidosThisMonth}
         remainingToCoverThisMonth={remainingToCoverThisMonth}
         totalChequesNextMonth={totalChequesNextMonth}
       />
