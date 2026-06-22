@@ -11,6 +11,7 @@ export function NotificationPrompt() {
     const { toast } = useToast();
     const [status, setStatus] = React.useState<NotificationPermission | 'unsupported'>('default');
     const [isLoading, setIsLoading] = React.useState(false);
+    const [dismissed, setDismissed] = React.useState(false);
 
     React.useEffect(() => {
         if (typeof window !== 'undefined' && 'Notification' in window) {
@@ -23,25 +24,23 @@ export function NotificationPrompt() {
     const handleEnable = async () => {
         if (!user) return;
         setIsLoading(true);
-        const success = await requestNotificationPermission(user.uid);
-        if (success) {
-            setStatus('granted');
-            toast({
-                title: 'Notificaciones Activadas',
-                description: 'Recibirás un resumen diario de las tareas en tu dispositivo.',
-            });
-        } else {
-            setStatus('denied');
-            toast({
-                variant: 'destructive',
-                title: 'Error',
-                description: 'No se pudieron activar las notificaciones. Verifica los permisos del navegador.',
-            });
-        }
-        setIsLoading(false);
+        const result = await requestNotificationPermission(user.uid);
+      if (result.success) {
+        toast({
+          title: "¡Excelente!",
+          description: "Las notificaciones se activaron correctamente. Estarás al tanto de los próximos Echeqs.",
+        });
+        setDismissed(true);
+      } else {
+        toast({
+          title: "Error",
+          description: `No se pudieron activar las notificaciones. Detalle: ${result.error}`,
+          variant: "destructive",
+        });
+      }  setIsLoading(false);
     };
 
-    if (status === 'granted' || status === 'unsupported' || !user) {
+    if (status === 'granted' || status === 'unsupported' || !user || dismissed) {
         return null; // Do not show if already granted, unsupported or not logged in
     }
 
