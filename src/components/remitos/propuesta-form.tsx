@@ -40,6 +40,7 @@ const FormSchema = z.object({
   validityDate: z.string().min(1, 'Vigencia requerida.'),
   estimatedDelivery: z.string().optional(),
   paymentTerms: z.string().optional(),
+  purchaseType: z.enum(['ACE', 'Directa']),
   items: z.array(z.object({
       description: z.string().min(1, "Obligatorio"),
       quantity: z.coerce.number().min(1, "Debe ser mayor a 0")
@@ -67,6 +68,7 @@ export function PropuestaForm({ setOpen }: { setOpen: (open: boolean) => void })
       validityDate: '',
       estimatedDelivery: '',
       paymentTerms: '',
+      purchaseType: 'Directa',
       items: [],
     },
   });
@@ -99,6 +101,9 @@ export function PropuestaForm({ setOpen }: { setOpen: (open: boolean) => void })
             form.setValue('validityDate', extractedData.validityDate || '', { shouldValidate: true });
             form.setValue('estimatedDelivery', extractedData.estimatedDelivery || '', { shouldValidate: true });
             form.setValue('paymentTerms', extractedData.paymentTerms || '', { shouldValidate: true });
+            if (extractedData.purchaseType) {
+               form.setValue('purchaseType', extractedData.purchaseType, { shouldValidate: true });
+            }
             
             if (extractedData.items) {
                form.setValue('items', extractedData.items, { shouldValidate: true });
@@ -147,9 +152,10 @@ export function PropuestaForm({ setOpen }: { setOpen: (open: boolean) => void })
         fileUrl: fileUrl,
         userId: user!.uid,
         registrationDate: serverTimestamp(),
-        status: 'En Tránsito', // Indicates that it was bought and is traveling
+        status: 'Confirmada', // Starting point in the pipeline
+        statusHistory: [{ status: 'Confirmada', date: new Date().toISOString(), user: user!.email }],
       });
-      toast({ title: 'Compra Confirmada', description: 'Propuesta guardada y en tránsito.' });
+      toast({ title: 'Compra Confirmada', description: 'Propuesta guardada y en proceso.' });
       setOpen(false);
     } catch (error: any) {
       toast({ variant: 'destructive', title: 'Error de DB', description: error.message });
@@ -211,6 +217,20 @@ export function PropuestaForm({ setOpen }: { setOpen: (open: boolean) => void })
               )} />
               <FormField control={form.control} name="paymentTerms" render={({ field }) => (
                   <FormItem><FormLabel>Pago</FormLabel><FormControl><Input {...field} /></FormControl></FormItem>
+              )} />
+              <FormField control={form.control} name="purchaseType" render={({ field }) => (
+                  <FormItem>
+                      <FormLabel>Tipo de Compra</FormLabel>
+                      <FormControl>
+                          <select 
+                            className="flex h-10 w-full items-center justify-between rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                            {...field}
+                          >
+                              <option value="Directa">Compra Directa</option>
+                              <option value="ACE">Red del Sol (ACE)</option>
+                          </select>
+                      </FormControl>
+                  </FormItem>
               )} />
             </div>
 

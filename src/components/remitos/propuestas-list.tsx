@@ -2,16 +2,26 @@
 
 import * as React from 'react';
 import { useFirestore } from '@/firebase';
-import { collection, query, orderBy, onSnapshot } from 'firebase/firestore';
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
+import { collection, query, orderBy, onSnapshot, doc, updateDoc, arrayUnion } from 'firebase/firestore';
+import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { Textarea } from '@/components/ui/textarea';
 import { format } from 'date-fns';
 import { es } from 'date-fns/locale';
-import { Calendar, Truck, CreditCard, PackageOpen, FileText } from 'lucide-react';
+import { Calendar, Truck, CreditCard, PackageOpen, FileText, ChevronRight, MessageSquareText } from 'lucide-react';
+import { PropuestaTimeline, PropuestaStatus } from './propuesta-timeline';
+import { useUser } from '@/firebase';
+import { useToast } from '@/hooks/use-toast';
 
 export function PropuestasList() {
     const firestore = useFirestore();
+    const { user } = useUser();
+    const { toast } = useToast();
     const [propuestas, setPropuestas] = React.useState<any[]>([]);
+    const [selectedPropuesta, setSelectedPropuesta] = React.useState<any>(null);
+    const [noteText, setNoteText] = React.useState('');
 
     React.useEffect(() => {
         if (!firestore) return;
@@ -33,23 +43,66 @@ export function PropuestasList() {
         );
     }
 
+    const PIPELINE: PropuestaStatus[] = ['Confirmada', 'Facturada', 'Pago Enviado', 'Picking', 'En Viaje', 'Recibida'];
+
+    const handleAdvanceStatus = async (propuesta: any) => {
+        if (!firestore || !user) return;
+        const currentIndex = PIPELINE.indexOf(propuesta.status);
+        if (currentIndex === -1 || currentIndex === PIPELINE.length - 1) return;
+        
+        const nextStatus = PIPELINE[currentIndex + 1];
+        const newHistoryEntry = { status: nextStatus, date: new Date().toISOString(), user: user.email || 'Admin' };
+        
+        try {
+            await updateDoc(doc(firestore, 'propuestas', propuesta.id), {
+                status: nextStatus,
+                statusHistory: arrayUnion(newHistoryEntry)
+            });
+            toast({ title: 'Estado Actualizado', description: `Avanzado a ${nextStatus}` });
+        } catch (error: any) {
+            toast({ variant: 'destructive', title: 'Error', description: error.message });
+        }
+    };
+
+    const handleAddNote = async (propuestaId: string) => {
+        if (!firestore || !user || !noteText.trim()) return;
+        const newNote = { text: noteText, date: new Date().toISOString(), user: user.email || 'Admin' };
+        try {
+            await updateDoc(doc(firestore, 'propuestas', propuestaId), {
+                notes: arrayUnion(newNote)
+            });
+            setNoteText('');
+            toast({ title: 'Nota guardada', description: 'Historial actualizado.' });
+        } catch (error: any) {
+            toast({ variant: 'destructive', title: 'Error', description: error.message });
+        }
+    };
+
     return (
-        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+        <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
             {propuestas.map((propuesta) => (
                 <Card key={propuesta.id} className="overflow-hidden hover:shadow-md transition-shadow">
                     <CardHeader className="bg-slate-50/50 border-b pb-4">
                         <div className="flex justify-between items-start">
-                            <CardTitle className="text-lg font-bold text-slate-800">
-                                {propuesta.provider}
-                            </CardTitle>
-                            <Badge variant={propuesta.status === 'Ingresado' ? 'default' : 'secondary'} 
-                                   className={propuesta.status === 'En Tránsito' ? 'bg-amber-100 text-amber-800 hover:bg-amber-100' : ''}>
-                                {propuesta.status}
+                            <div>
+                                <CardTitle className="text-lg font-bold text-slate-800 flex items-center gap-2">
+                                    {propuesta.provider}
+                                    {propuesta.purchaseType === 'ACE' && (
+                                        <Badge variant="outline" className="bg-purple-50 text-purple-700 border-purple-200 text-[10px] px-1.5 py-0">ACE</Badge>
+                                    )}
+                                </CardTitle>
+                                <CardDescription className="flex items-center gap-1 text-xs mt-1">
+                                    <Calendar className="h-3 w-3" /> Vig: {propuesta.validityDate || 'N/A'}
+                                </CardDescription>
+                            </div>
+                            <Badge variant={propuesta.status === 'Recibida' ? 'default' : 'secondary'} 
+                                   className="bg-blue-50 text-blue-700 hover:bg-blue-100 border-blue-200">
+                                {propuesta.status || 'Confirmada'}
                             </Badge>
                         </div>
-                        <CardDescription className="flex items-center gap-1 text-xs mt-1">
-                            <Calendar className="h-3 w-3" /> Vigencia: {propuesta.validityDate || 'N/A'}
-                        </CardDescription>
+                        <div className="mt-4 mb-2">
+                            <PropuestaTimeline currentStatus={propuesta.status || 'Confirmada'} history={propuesta.statusHistory} />
+                        </div>
                     </CardHeader>
                     <CardContent className="pt-4 space-y-4">
                         <div className="grid grid-cols-2 gap-2 text-sm">
@@ -84,11 +137,67 @@ export function PropuestasList() {
                         
                         {propuesta.fileUrl && (
                              <a href={propuesta.fileUrl} target="_blank" rel="noreferrer" 
-                                className="block text-center text-xs text-blue-600 hover:underline pt-2 border-t">
+                                className="block text-center text-xs text-blue-600 hover:underline pt-2 border-t mt-4">
                                  Ver Documento Original
                              </a>
                         )}
                     </CardContent>
+                    
+                    <CardFooter className="bg-slate-50 border-t p-3 flex flex-col gap-2">
+                        <div className="flex gap-2 w-full">
+                            <Dialog>
+                                <DialogTrigger asChild>
+                                    <Button variant="outline" size="sm" className="w-full bg-white">
+                                        <MessageSquareText className="w-4 h-4 mr-1 text-slate-500" />
+                                        Notas ({propuesta.notes?.length || 0})
+                                    </Button>
+                                </DialogTrigger>
+                                <DialogContent>
+                                    <DialogHeader>
+                                        <DialogTitle>Registro de Gestión: {propuesta.provider}</DialogTitle>
+                                    </DialogHeader>
+                                    <div className="space-y-4 max-h-[60vh] overflow-y-auto pr-2">
+                                        {propuesta.notes?.map((n: any, i: number) => (
+                                            <div key={i} className="bg-slate-50 p-3 rounded-lg border text-sm">
+                                                <div className="flex justify-between text-xs text-slate-500 mb-1">
+                                                    <span className="font-semibold text-slate-700">{n.user}</span>
+                                                    <span>{format(new Date(n.date), "dd/MM HH:mm")}</span>
+                                                </div>
+                                                {n.text}
+                                            </div>
+                                        ))}
+                                        {(!propuesta.notes || propuesta.notes.length === 0) && (
+                                            <p className="text-sm text-slate-500 text-center py-4">No hay notas de gestión registradas.</p>
+                                        )}
+                                        <div className="pt-4 border-t">
+                                            <Textarea 
+                                                placeholder="Ej: Hablé con Juan, facturan el viernes..." 
+                                                value={noteText}
+                                                onChange={(e) => setNoteText(e.target.value)}
+                                                className="mb-2 text-sm"
+                                            />
+                                            <Button size="sm" className="w-full" onClick={() => handleAddNote(propuesta.id)}>Guardar Nota</Button>
+                                        </div>
+                                    </div>
+                                </DialogContent>
+                            </Dialog>
+                            
+                            {propuesta.status !== 'Recibida' && (
+                                <Button 
+                                    size="sm" 
+                                    className="w-full bg-blue-600 hover:bg-blue-700 text-white"
+                                    onClick={() => handleAdvanceStatus(propuesta)}
+                                >
+                                    Avanzar <ChevronRight className="w-4 h-4 ml-1" />
+                                </Button>
+                            )}
+                        </div>
+                        {propuesta.status !== 'Recibida' && (
+                            <div className="text-[10px] text-center text-slate-400 w-full">
+                                Próximo estado: <strong className="text-slate-500">{PIPELINE[PIPELINE.indexOf(propuesta.status) + 1]}</strong>
+                            </div>
+                        )}
+                    </CardFooter>
                 </Card>
             ))}
         </div>

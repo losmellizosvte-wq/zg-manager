@@ -14,6 +14,7 @@ const ExtractPropuestaOutputSchema = z.object({
   validityDate: z.string().describe('Vigencia de la propuesta o fecha de confirmación (ej. 19-06-2026 a 23-06-2026).'),
   estimatedDelivery: z.string().describe('Fecha de entrega aproximada (ej. 30/06). Si no hay, dejar vacío.').optional(),
   paymentTerms: z.string().describe('Condición de pago elegida o mencionada (ej. E-CHEQ-60 DIAS).').optional(),
+  purchaseType: z.enum(['ACE', 'Directa']).describe('Tipo de compra. "ACE" si menciona Red del Sol ACE o Unic. Por ACE, "Directa" en caso contrario.').default('Directa'),
   items: z.array(
     z.object({
       description: z.string().describe('Descripción detallada del producto (ej. AIAS4507BC Codini Lavarropas).'),
@@ -39,6 +40,7 @@ const prompt = ai.definePrompt({
   - validityDate: Rango de vigencia o fecha de confirmación (Ej: "19-06-2026 a 23-06-2026").
   - estimatedDelivery: Entrega Aproximada (Ej: "30/06").
   - paymentTerms: Método de pago, Ej: "E-CHEQ-60 DIAS" o "Cheque 60 días".
+  - purchaseType: Si el documento menciona "ACE" o "Red del Sol ACE", pon "ACE". Si no, pon "Directa".
   - items: Lista de productos comprados, sacando la "Descripción" y las "Unidades" exactas.
 
   Documento: {{media url=dataUri}}
