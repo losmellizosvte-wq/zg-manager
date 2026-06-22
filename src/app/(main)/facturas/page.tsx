@@ -6,7 +6,7 @@ import { useCollection, useFirestore, useMemoFirebase } from '@/firebase';
 import { collection, query } from 'firebase/firestore';
 import { Invoice, Cheque } from '@/lib/types';
 import { Skeleton } from '@/components/ui/skeleton';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Skeleton } from '@/components/ui/skeleton';
 
 function InvoicesSkeleton() {
   return (
@@ -84,20 +84,9 @@ export default function FacturasPage() {
         </div>
       </div>
       
-      <Tabs defaultValue="recibidas" className="w-full">
-        <TabsList className="grid w-full max-w-md grid-cols-2 mb-6">
-          <TabsTrigger value="emitidas">Emitidas (Ventas)</TabsTrigger>
-          <TabsTrigger value="recibidas">Recibidas (Gastos)</TabsTrigger>
-        </TabsList>
-        <TabsContent value="emitidas">
-          <div className="text-center py-12 text-muted-foreground border rounded-lg bg-slate-50/50">
-             No hay facturas emitidas registradas.
-          </div>
-        </TabsContent>
-        <TabsContent value="recibidas">
-          <InvoicesTable invoices={invoices || []} allCheques={allCheques || []} />
-        </TabsContent>
-      </Tabs>
+      <div className="border rounded-xl bg-white shadow-sm overflow-hidden p-2 mt-6">
+        <InvoicesTable invoices={invoices || []} allCheques={allCheques || []} />
+      </div>
     </div>
   );
 }

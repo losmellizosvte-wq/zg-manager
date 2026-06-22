@@ -28,6 +28,7 @@ const TaskFormSchema = z.object({
   title: z.string().min(1, 'El título es requerido.'),
   assignee: z.enum(executives, { required_error: 'Debe designar a un responsable.' }),
   dueDate: z.date({ required_error: 'La fecha de vencimiento es requerida.'}),
+  recurrence: z.enum(['none', 'weekly']).default('none'),
 });
 
 type TaskFormValues = z.infer<typeof TaskFormSchema>;
@@ -41,6 +42,7 @@ export function NewTaskDialog({ children, onSave }: { children: React.ReactNode,
     defaultValues: {
       title: '',
       dueDate: new Date(),
+      recurrence: 'none',
     }
   });
 
@@ -49,7 +51,7 @@ export function NewTaskDialog({ children, onSave }: { children: React.ReactNode,
     const success = await onSave(data);
     if (success) {
       setFormOpen(false);
-      form.reset({ title: '', assignee: undefined, dueDate: new Date() });
+      form.reset({ title: '', assignee: undefined, dueDate: new Date(), recurrence: 'none' });
     }
     setIsSubmitting(false);
   }
@@ -140,6 +142,27 @@ export function NewTaskDialog({ children, onSave }: { children: React.ReactNode,
                             />
                             </PopoverContent>
                         </Popover>
+                        <FormMessage />
+                        </FormItem>
+                    )}
+                    />
+                    <FormField
+                    control={form.control}
+                    name="recurrence"
+                    render={({ field }) => (
+                        <FormItem className="col-span-2">
+                        <FormLabel>Recurrencia (opcional)</FormLabel>
+                        <Select onValueChange={field.onChange} defaultValue={field.value}>
+                            <FormControl>
+                            <SelectTrigger>
+                                <SelectValue placeholder="Sin recurrencia" />
+                            </SelectTrigger>
+                            </FormControl>
+                            <SelectContent>
+                              <SelectItem value="none">Sin recurrencia (Una sola vez)</SelectItem>
+                              <SelectItem value="weekly">Semanal (Se repite cada 7 días)</SelectItem>
+                            </SelectContent>
+                        </Select>
                         <FormMessage />
                         </FormItem>
                     )}

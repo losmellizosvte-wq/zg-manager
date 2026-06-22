@@ -6,7 +6,7 @@ import { useCollection, useFirestore, useMemoFirebase } from '@/firebase';
 import { collection, query } from 'firebase/firestore';
 import { Cheque } from '@/lib/types';
 import { Skeleton } from '@/components/ui/skeleton';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Skeleton } from '@/components/ui/skeleton';
 
 function CalendarSkeleton() {
   return (
@@ -56,27 +56,25 @@ export default function CalendarioPage() {
         <div>
           <h1 className="text-3xl font-bold tracking-tight">Calendario de Pagos</h1>
           <p className="text-muted-foreground">
-            Visualice el flujo neto y los vencimientos de cheques.
+            Visualice los vencimientos de cheques emitidos y recibidos.
           </p>
         </div>
       </div>
       
-      <Tabs defaultValue="flujo-neto" className="w-full">
-        <TabsList className="grid w-full max-w-lg grid-cols-3 mb-6">
-          <TabsTrigger value="flujo-neto">Flujo Neto</TabsTrigger>
-          <TabsTrigger value="emitidos">Emitidos (Propios)</TabsTrigger>
-          <TabsTrigger value="recibidos">Recibidos (Terceros)</TabsTrigger>
-        </TabsList>
-        <TabsContent value="flujo-neto">
-          <PaymentCalendar cheques={pendingCheques} />
-        </TabsContent>
-        <TabsContent value="emitidos">
-          <PaymentCalendar cheques={emitidos} />
-        </TabsContent>
-        <TabsContent value="recibidos">
-          <PaymentCalendar cheques={recibidos} />
-        </TabsContent>
-      </Tabs>
+      <div className="grid grid-cols-1 xl:grid-cols-2 gap-8">
+        <div>
+          <h2 className="text-xl font-semibold mb-4 text-slate-800">Cheques Emitidos (Propios a cubrir)</h2>
+          <div className="border rounded-xl bg-white shadow-sm overflow-hidden p-2">
+            <PaymentCalendar cheques={emitidos} />
+          </div>
+        </div>
+        <div>
+          <h2 className="text-xl font-semibold mb-4 text-slate-800">Cheques Recibidos (Terceros a cobrar)</h2>
+          <div className="border rounded-xl bg-white shadow-sm overflow-hidden p-2">
+            <PaymentCalendar cheques={recibidos} />
+          </div>
+        </div>
+      </div>
     </div>
   );
 }

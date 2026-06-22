@@ -4,7 +4,6 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Button } from '@/components/ui/button';
 import { BrainCircuit, Loader2, Share2, FileText } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
-import { generateExecutiveSummary } from '@/ai/flows/generate-executive-summary';
 import type { Cheque, Invoice, Task } from '@/lib/types';
 import { Skeleton } from '../ui/skeleton';
 
@@ -54,16 +53,33 @@ export function ExecutiveSummary({ tasks, cheques, invoices }: ExecutiveSummaryP
             isCompleted: t.isCompleted,
         }));
 
-        const result = await generateExecutiveSummary({
-            invoices: simplifiedInvoices,
-            cheques: simplifiedCheques,
-            tasks: simplifiedTasks,
+        const response = await fetch('/api/summary', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                invoices: simplifiedInvoices,
+                cheques: simplifiedCheques,
+                tasks: simplifiedTasks,
+            })
         });
+
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
+        }
+
+        const reader = response.body?.getReader();
+        if (!reader) throw new Error('No reader available');
         
-        if (result.summary) {
-            setSummary(result.summary);
-        } else {
-            throw new Error('La IA no devolvió un resumen.');
+        const decoder = new TextDecoder();
+        let done = false;
+
+        while (!done) {
+            const { value, done: readerDone } = await reader.read();
+            done = readerDone;
+            if (value) {
+                const chunkText = decoder.decode(value, { stream: true });
+                setSummary(prev => prev + chunkText);
+            }
         }
 
     } catch (error) {

@@ -5,7 +5,6 @@ type StatsCardsProps = {
   pendingInvoicesAmountThisMonth: number;
   remainingToCoverThisMonth: number;
   tercerosACobrarThisMonth: number;
-  flujoNetoThisMonth: number;
 };
 
 const formatCurrency = (amount: number) => {
@@ -20,11 +19,10 @@ const formatCurrency = (amount: number) => {
 export function StatsCards({
   pendingInvoicesAmountThisMonth,
   remainingToCoverThisMonth,
-  tercerosACobrarThisMonth,
-  flujoNetoThisMonth
+  tercerosACobrarThisMonth
 }: StatsCardsProps) {
   return (
-    <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+    <div className="grid gap-4 md:grid-cols-3">
       <Card>
         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
           <CardTitle className="text-sm font-medium">Facturas a Pagar</CardTitle>
@@ -58,19 +56,6 @@ export function StatsCards({
         </CardContent>
       </Card>
 
-      <Card className={flujoNetoThisMonth < 0 ? "border-red-200 bg-red-50/30" : "border-green-200 bg-green-50/30"}>
-        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-          <CardTitle className="text-sm font-medium">Flujo Neto Proyectado</CardTitle>
-          <TrendingUp className={`h-4 w-4 ${flujoNetoThisMonth < 0 ? 'text-red-500' : 'text-green-500'}`} />
-        </CardHeader>
-        <CardContent>
-          <div className={`text-2xl font-bold ${flujoNetoThisMonth < 0 ? 'text-red-600' : 'text-green-600'}`}>
-            {formatCurrency(flujoNetoThisMonth)}
-          </div>
-          <p className="text-xs text-muted-foreground">
-            Diferencia entre cobrar terceros y cubrir propios.
-          </p>
-        </CardContent>
       </Card>
     </div>
   );

@@ -23,7 +23,7 @@ import type { Cheque, Invoice } from '@/lib/types';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Check, ChevronsUpDown } from 'lucide-react';
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem } from '@/components/ui/command';
-import { cn, getInvoicePaymentDetails } from '@/lib/utils';
+import { cn, getInvoicePaymentDetails, isSemanticallySimilar } from '@/lib/utils';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { useFirestore, useUser } from '@/firebase';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
@@ -71,7 +71,7 @@ export function ChequeForm({ setOpen, pendingInvoices, allCheques }: { setOpen: 
 
   React.useEffect(() => {
     if (beneficiary) {
-      setAvailableInvoices(pendingInvoices.filter(inv => inv.provider.toLowerCase() === beneficiary.toLowerCase()));
+      setAvailableInvoices(pendingInvoices.filter(inv => isSemanticallySimilar(inv.provider, beneficiary)));
     } else {
       setAvailableInvoices([]);
     }

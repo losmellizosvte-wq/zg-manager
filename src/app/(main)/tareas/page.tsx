@@ -3,6 +3,7 @@
 import * as React from 'react';
 import { useCollection, useFirestore, useUser, useMemoFirebase, errorEmitter, FirestorePermissionError } from '@/firebase';
 import { collection, query, addDoc, serverTimestamp, doc, updateDoc, getDoc } from 'firebase/firestore';
+import { addDays } from 'date-fns';
 import { executives, Task } from "@/lib/types";
 import { TasksBoard } from "@/components/tasks/tasks-board";
 import { Skeleton } from '@/components/ui/skeleton';
@@ -77,6 +78,23 @@ export default function TareasPage() {
           });
           errorEmitter.emit('permission-error', permissionError);
       });
+      
+    // Duplicate recurring task if it's being marked as completed
+    if (!taskToUpdate.isCompleted && taskToUpdate.recurrence === 'weekly') {
+        const tasksCollection = collection(firestore, 'tasks');
+        const nextDueDate = taskToUpdate.dueDate?.toDate ? addDays(taskToUpdate.dueDate.toDate(), 7) : addDays(new Date(taskToUpdate.dueDate), 7);
+        const newTaskPayload = {
+            title: taskToUpdate.title,
+            assignee: taskToUpdate.assignee,
+            dueDate: nextDueDate,
+            recurrence: 'weekly',
+            creatorId: user.uid,
+            creationDate: serverTimestamp(),
+            isCompleted: false,
+            completedAt: null,
+        };
+        addDoc(tasksCollection, newTaskPayload).catch(console.error);
+    }
   }
 
 

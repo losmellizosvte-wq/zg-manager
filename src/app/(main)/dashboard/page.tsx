@@ -81,7 +81,6 @@ export default function DashboardPage() {
     const remainingToCoverThisMonth = totalEmitidosThisMonth - debitedThisMonth;
     
     const tercerosACobrarThisMonth = tercerosThisMonth.filter(c => c.status !== 'Debitado').reduce((sum, c) => sum + parseFloat(c.amount), 0);
-    const flujoNetoThisMonth = tercerosACobrarThisMonth - remainingToCoverThisMonth;
 
     const totalChequesNextMonth = allCheques.filter(c => {
         const dueDate = new Date(c.dueDate.split('-').join('/'));
@@ -97,7 +96,6 @@ export default function DashboardPage() {
     return {
         remainingToCoverThisMonth,
         tercerosACobrarThisMonth,
-        flujoNetoThisMonth,
         pendingInvoicesAmountThisMonth,
         emitidosThisMonth,
     };
@@ -112,7 +110,6 @@ export default function DashboardPage() {
   const { 
     remainingToCoverThisMonth,
     tercerosACobrarThisMonth,
-    flujoNetoThisMonth,
     pendingInvoicesAmountThisMonth,
     emitidosThisMonth
   } = dashboardData!;
@@ -131,7 +128,6 @@ export default function DashboardPage() {
         pendingInvoicesAmountThisMonth={pendingInvoicesAmountThisMonth}
         remainingToCoverThisMonth={remainingToCoverThisMonth}
         tercerosACobrarThisMonth={tercerosACobrarThisMonth}
-        flujoNetoThisMonth={flujoNetoThisMonth}
       />
       
       <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-7">

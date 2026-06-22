@@ -15,8 +15,8 @@ const formatCurrency = (value: number) => {
     return new Intl.NumberFormat('es-AR', {
         style: 'currency',
         currency: 'ARS',
-        minimumFractionDigits: 2,
-        maximumFractionDigits: 2,
+        minimumFractionDigits: 0,
+        maximumFractionDigits: 0,
     }).format(value);
 };
 
@@ -92,11 +92,17 @@ export default function PriceCalculator({ providers }: { providers: Provider[] }
         if (applyShipping) currentPrice = currentPrice * (1 + (parseFloat(shipping) || 0) / 100);
         const finalCost = currentPrice;
         
-        const cashPrice = finalCost * (1 + (parseFloat(cashProfit) || 0) / 100) + 1000;
-        const listPrice = cashPrice * (1 + (parseFloat(listProfit) || 0) / 100);
-        const financingPrice = listPrice * (1 + (parseFloat(financingInterest) || 0) / 100);
+        const cashPrice = Math.ceil(finalCost * (1 + (parseFloat(cashProfit) || 0) / 100) + 1000);
+        const listPrice = Math.ceil(cashPrice * (1 + (parseFloat(listProfit) || 0) / 100));
+        const financingPrice = Math.ceil(listPrice * (1 + (parseFloat(financingInterest) || 0) / 100));
 
-        return { costAfterDiscount, finalCost, cashPrice, listPrice, financingPrice };
+        return { 
+            costAfterDiscount: Math.ceil(costAfterDiscount), 
+            finalCost: Math.ceil(finalCost), 
+            cashPrice, 
+            listPrice, 
+            financingPrice 
+        };
     }, [
         cost, discount, applyDiscount, internalTax, applyInternalTax, iibb, 
         applyIibb, iva, applyIva, shipping, applyShipping, cashProfit, 
@@ -234,17 +240,17 @@ export default function PriceCalculator({ providers }: { providers: Provider[] }
                         <CardTitle className="text-primary">Precios de Venta</CardTitle>
                     </CardHeader>
                     <CardContent className="space-y-4">
-                       <div className="flex justify-between items-baseline p-3 bg-background rounded-lg">
-                            <span className="font-semibold text-lg">Contado</span>
-                            <span className="font-bold text-2xl text-primary">{formatCurrency(calculatedValues.cashPrice)}</span>
+                       <div className="flex flex-col sm:flex-row sm:justify-between items-start sm:items-center p-3 bg-background rounded-lg gap-1">
+                            <span className="font-semibold text-lg text-slate-700">Contado</span>
+                            <span className="font-bold text-xl sm:text-2xl text-primary break-all">{formatCurrency(calculatedValues.cashPrice)}</span>
                         </div>
-                        <div className="flex justify-between items-baseline p-3 bg-background rounded-lg">
-                            <span className="font-semibold text-lg">Precio de Lista</span>
-                            <span className="font-bold text-2xl text-primary">{formatCurrency(calculatedValues.listPrice)}</span>
+                        <div className="flex flex-col sm:flex-row sm:justify-between items-start sm:items-center p-3 bg-background rounded-lg gap-1">
+                            <span className="font-semibold text-lg text-slate-700">Precio Lista</span>
+                            <span className="font-bold text-xl sm:text-2xl text-primary break-all">{formatCurrency(calculatedValues.listPrice)}</span>
                         </div>
-                         <div className="flex justify-between items-baseline p-3 bg-background rounded-lg">
-                            <span className="font-semibold text-lg">Precio Financiado</span>
-                            <span className="font-bold text-2xl text-primary">{formatCurrency(calculatedValues.financingPrice)}</span>
+                         <div className="flex flex-col sm:flex-row sm:justify-between items-start sm:items-center p-3 bg-background rounded-lg gap-1">
+                            <span className="font-semibold text-lg text-slate-700">Financiado</span>
+                            <span className="font-bold text-xl sm:text-2xl text-primary break-all">{formatCurrency(calculatedValues.financingPrice)}</span>
                         </div>
                     </CardContent>
                 </Card>
