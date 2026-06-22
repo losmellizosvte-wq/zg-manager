@@ -23,11 +23,8 @@ export async function requestNotificationPermission(userId: string): Promise<boo
     const { firebaseApp } = initializeFirebase();
     const messaging = getMessaging(firebaseApp);
     
-    // Register the service worker manually to ensure it uses the right path
-    let registration = await navigator.serviceWorker.getRegistration('/firebase-messaging-sw.js');
-    if (!registration) {
-      registration = await navigator.serviceWorker.register('/firebase-messaging-sw.js');
-    }
+    // next-pwa handles the service worker registration
+    const registration = await navigator.serviceWorker.ready;
 
     const currentToken = await getToken(messaging, {
       vapidKey: VAPID_KEY,
