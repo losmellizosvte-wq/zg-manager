@@ -4,20 +4,20 @@ import { doc, setDoc, serverTimestamp, getFirestore } from 'firebase/firestore';
 
 const VAPID_KEY = 'BJbY9s78miTi195wkqjHLVQIjUdADnvaDSzieFshtIDzotHfT4gpuaEZNX9VbYJX22dRd7BNchdWJxiXEOAVH3A';
 
-export async function requestNotificationPermission(userId: string): Promise<boolean> {
-  if (typeof window === 'undefined') return false;
+export async function requestNotificationPermission(userId: string): Promise<{success: boolean, error?: string}> {
+  if (typeof window === 'undefined') return {success: false, error: 'SSR'};
 
   try {
     const supported = await isSupported();
     if (!supported) {
       console.warn('Firebase Messaging is not supported in this browser.');
-      return false;
+      return {success: false, error: 'Not supported'};
     }
 
     const permission = await Notification.requestPermission();
     if (permission !== 'granted') {
       console.warn('Notification permission not granted.');
-      return false;
+      return {success: false, error: 'Permission denied'};
     }
 
     const { firebaseApp } = initializeFirebase();
@@ -40,13 +40,13 @@ export async function requestNotificationPermission(userId: string): Promise<boo
         userId: userId
       }, { merge: true });
       
-      return true;
+      return {success: true};
     } else {
       console.warn('No registration token available.');
-      return false;
+      return {success: false, error: 'No token available from Firebase'};
     }
-  } catch (error) {
+  } catch (error: any) {
     console.error('An error occurred while retrieving token. ', error);
-    return false;
+    return {success: false, error: error.message || String(error)};
   }
 }
