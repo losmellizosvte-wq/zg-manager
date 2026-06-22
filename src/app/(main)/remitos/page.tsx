@@ -1,3 +1,5 @@
+'use client';
+
 import { RemitoForm } from "@/components/remitos/remito-form";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";

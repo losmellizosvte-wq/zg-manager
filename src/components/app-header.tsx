@@ -1,3 +1,5 @@
+'use client';
+
 import { SidebarTrigger } from "@/components/ui/sidebar";
 import { FullLogo } from "@/components/logo";
 import { Bell } from "lucide-react";
