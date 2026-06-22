@@ -2,7 +2,7 @@
 
 import { useState, useCallback } from 'react';
 import { collection, query, where, getDocs, Timestamp } from 'firebase/firestore';
-import { useFirebase } from '@/firebase/client-provider';
+import { useFirebase } from '@/firebase';
 
 export function useStockValidator() {
   const { firestore } = useFirebase();

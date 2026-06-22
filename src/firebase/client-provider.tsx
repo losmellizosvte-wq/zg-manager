@@ -21,7 +21,9 @@ function LoadingSkeleton() {
         </Sidebar>
         <SidebarInset>
           <div className="flex flex-col h-full">
-              <AppHeader />
+              <header className="sticky top-0 z-10 flex h-16 items-center gap-4 border-b bg-background/80 px-4 md:px-8">
+                <Skeleton className="h-8 w-24" />
+              </header>
               <main className="flex-1 overflow-y-auto p-4 sm:p-6 lg:p-8">
                 <div className="flex flex-col gap-8">
                   <h1 className="text-3xl font-bold tracking-tight"><Skeleton className="h-10 w-1/2" /></h1>
