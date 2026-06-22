@@ -95,7 +95,7 @@ export default function DashboardPage() {
 
     return {
         remainingToCoverThisMonth,
-        tercerosACobrarThisMonth,
+        totalChequesNextMonth,
         pendingInvoicesAmountThisMonth,
         emitidosThisMonth,
     };
@@ -109,7 +109,7 @@ export default function DashboardPage() {
   
   const { 
     remainingToCoverThisMonth,
-    tercerosACobrarThisMonth,
+    totalChequesNextMonth,
     pendingInvoicesAmountThisMonth,
     emitidosThisMonth
   } = dashboardData!;
@@ -127,7 +127,7 @@ export default function DashboardPage() {
       <StatsCards 
         pendingInvoicesAmountThisMonth={pendingInvoicesAmountThisMonth}
         remainingToCoverThisMonth={remainingToCoverThisMonth}
-        tercerosACobrarThisMonth={tercerosACobrarThisMonth}
+        totalChequesNextMonth={totalChequesNextMonth}
       />
       
       <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-7">

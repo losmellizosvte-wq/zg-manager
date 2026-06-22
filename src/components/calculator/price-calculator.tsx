@@ -239,19 +239,18 @@ export default function PriceCalculator({ providers }: { providers: Provider[] }
                      <CardHeader>
                         <CardTitle className="text-primary">Precios de Venta</CardTitle>
                     </CardHeader>
-                    <CardContent className="space-y-4">
-                       <div className="flex flex-col sm:flex-row sm:justify-between items-start sm:items-center p-3 bg-background rounded-lg gap-1">
+                    <CardContent className="spa                        <div className="flex flex-col sm:flex-row sm:justify-between items-start sm:items-center p-3 bg-background rounded-lg gap-1">
                             <span className="font-semibold text-lg text-slate-700">Contado</span>
-                            <span className="font-bold text-xl sm:text-2xl text-primary break-all">{formatCurrency(calculatedValues.cashPrice)}</span>
+                            <span className="font-bold text-xl sm:text-2xl text-primary tracking-tight">{formatCurrency(calculatedValues.cashPrice)}</span>
                         </div>
                         <div className="flex flex-col sm:flex-row sm:justify-between items-start sm:items-center p-3 bg-background rounded-lg gap-1">
                             <span className="font-semibold text-lg text-slate-700">Precio Lista</span>
-                            <span className="font-bold text-xl sm:text-2xl text-primary break-all">{formatCurrency(calculatedValues.listPrice)}</span>
+                            <span className="font-bold text-xl sm:text-2xl text-primary tracking-tight">{formatCurrency(calculatedValues.listPrice)}</span>
                         </div>
                          <div className="flex flex-col sm:flex-row sm:justify-between items-start sm:items-center p-3 bg-background rounded-lg gap-1">
                             <span className="font-semibold text-lg text-slate-700">Financiado</span>
-                            <span className="font-bold text-xl sm:text-2xl text-primary break-all">{formatCurrency(calculatedValues.financingPrice)}</span>
-                        </div>
+                            <span className="font-bold text-xl sm:text-2xl text-primary tracking-tight">{formatCurrency(calculatedValues.financingPrice)}</span>
+                        </div>   </div>
                     </CardContent>
                 </Card>
 

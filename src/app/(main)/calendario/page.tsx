@@ -6,6 +6,7 @@ import { useCollection, useFirestore, useMemoFirebase } from '@/firebase';
 import { collection, query } from 'firebase/firestore';
 import { Cheque } from '@/lib/types';
 import { Skeleton } from '@/components/ui/skeleton';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
 function CalendarSkeleton() {
   return (
@@ -60,20 +61,24 @@ export default function CalendarioPage() {
         </div>
       </div>
       
-      <div className="grid grid-cols-1 xl:grid-cols-2 gap-8">
-        <div>
-          <h2 className="text-xl font-semibold mb-4 text-slate-800">Cheques Emitidos (Propios a cubrir)</h2>
+      <Tabs defaultValue="emitidos" className="w-full">
+        <TabsList className="grid w-full max-w-md grid-cols-2 mb-6">
+          <TabsTrigger value="emitidos">Emitidos (Propios)</TabsTrigger>
+          <TabsTrigger value="recibidos">Recibidos (Terceros)</TabsTrigger>
+        </TabsList>
+        
+        <TabsContent value="emitidos">
           <div className="border rounded-xl bg-white shadow-sm overflow-hidden p-2">
             <PaymentCalendar cheques={emitidos} />
           </div>
-        </div>
-        <div>
-          <h2 className="text-xl font-semibold mb-4 text-slate-800">Cheques Recibidos (Terceros a cobrar)</h2>
+        </TabsContent>
+        
+        <TabsContent value="recibidos">
           <div className="border rounded-xl bg-white shadow-sm overflow-hidden p-2">
             <PaymentCalendar cheques={recibidos} />
           </div>
-        </div>
-      </div>
+        </TabsContent>
+      </Tabs>
     </div>
   );
 }
