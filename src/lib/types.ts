@@ -85,3 +85,15 @@ export type Provider = {
   ruleset_lista?: CalculationRules;
   ruleset_factura?: CalculationRules;
 };
+
+export type StockEnTransito = {
+  id: string;
+  providerId: string;
+  providerName: string;
+  items: { description: string; quantity: number }[];
+  date: any; // Can be string or Firebase Timestamp
+  fileUrl: string;
+  status: 'Pendiente' | 'Procesado';
+  registrationDate: any;
+};
+
