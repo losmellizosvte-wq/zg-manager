@@ -10,7 +10,7 @@ export function useStockValidator() {
   const [warningData, setWarningData] = useState<{ quantity: number, description: string, executives: string } | null>(null);
   
   const validatePurchase = useCallback(async (providerName: string, items: { description: string, quantity: number }[]) => {
-    if (!firestore || providerName.toLowerCase() !== 'red del sol' || items.length === 0) {
+    if (!firestore || items.length === 0) {
       return true; // OK to proceed
     }
     
@@ -19,9 +19,9 @@ export function useStockValidator() {
       thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
       
       const q = query(
-        collection(firestore, 'stock_en_transito'),
-        where('providerName', '==', 'Red del Sol'),
-        where('date', '>=', Timestamp.fromDate(thirtyDaysAgo))
+        collection(firestore, 'propuestas'),
+        where('provider', '==', providerName),
+        where('registrationDate', '>=', Timestamp.fromDate(thirtyDaysAgo))
       );
       
       const querySnapshot = await getDocs(q);
