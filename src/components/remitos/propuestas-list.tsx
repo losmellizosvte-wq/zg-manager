@@ -2,15 +2,16 @@
 
 import * as React from 'react';
 import { useFirestore } from '@/firebase';
-import { collection, query, orderBy, onSnapshot, doc, updateDoc, arrayUnion } from 'firebase/firestore';
+import { collection, query, orderBy, onSnapshot, doc, updateDoc, arrayUnion, deleteDoc } from 'firebase/firestore';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '@/components/ui/alert-dialog';
 import { Textarea } from '@/components/ui/textarea';
 import { format } from 'date-fns';
 import { es } from 'date-fns/locale';
-import { Calendar, Truck, CreditCard, PackageOpen, FileText, ChevronRight, MessageSquareText } from 'lucide-react';
+import { Calendar, Truck, CreditCard, PackageOpen, FileText, ChevronRight, MessageSquareText, Trash2 } from 'lucide-react';
 import { PropuestaTimeline, PropuestaStatus } from './propuesta-timeline';
 import { useUser } from '@/firebase';
 import { useToast } from '@/hooks/use-toast';
@@ -47,7 +48,12 @@ export function PropuestasList() {
 
     const handleAdvanceStatus = async (propuesta: any) => {
         if (!firestore || !user) return;
-        const currentIndex = PIPELINE.indexOf(propuesta.status);
+        
+        let currentStatus = propuesta.status || 'Confirmada';
+        // Handle legacy status from previous version
+        if (currentStatus === 'En Tránsito') currentStatus = 'Confirmada';
+        
+        const currentIndex = PIPELINE.indexOf(currentStatus);
         if (currentIndex === -1 || currentIndex === PIPELINE.length - 1) return;
         
         const nextStatus = PIPELINE[currentIndex + 1];
@@ -78,6 +84,16 @@ export function PropuestasList() {
         }
     };
 
+    const handleDelete = async (id: string) => {
+        if (!firestore) return;
+        try {
+            await deleteDoc(doc(firestore, 'propuestas', id));
+            toast({ title: 'Eliminada', description: 'La propuesta fue borrada correctamente.' });
+        } catch (error: any) {
+            toast({ variant: 'destructive', title: 'Error al eliminar', description: error.message });
+        }
+    };
+
     return (
         <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
             {propuestas.map((propuesta) => (
@@ -95,13 +111,34 @@ export function PropuestasList() {
                                     <Calendar className="h-3 w-3" /> Vig: {propuesta.validityDate || 'N/A'}
                                 </CardDescription>
                             </div>
-                            <Badge variant={propuesta.status === 'Recibida' ? 'default' : 'secondary'} 
-                                   className="bg-blue-50 text-blue-700 hover:bg-blue-100 border-blue-200">
-                                {propuesta.status || 'Confirmada'}
-                            </Badge>
+                            <div className="flex flex-col items-end gap-2">
+                                <AlertDialog>
+                                    <AlertDialogTrigger asChild>
+                                        <button className="text-slate-300 hover:text-red-500 transition-colors">
+                                            <Trash2 className="w-4 h-4" />
+                                        </button>
+                                    </AlertDialogTrigger>
+                                    <AlertDialogContent>
+                                        <AlertDialogHeader>
+                                            <AlertDialogTitle>¿Eliminar esta propuesta?</AlertDialogTitle>
+                                            <AlertDialogDescription>
+                                                Esta acción no se puede deshacer. Se borrará el historial y ya no estará en seguimiento.
+                                            </AlertDialogDescription>
+                                        </AlertDialogHeader>
+                                        <AlertDialogFooter>
+                                            <AlertDialogCancel>Cancelar</AlertDialogCancel>
+                                            <AlertDialogAction onClick={() => handleDelete(propuesta.id)} className="bg-red-600 hover:bg-red-700">Sí, eliminar</AlertDialogAction>
+                                        </AlertDialogFooter>
+                                    </AlertDialogContent>
+                                </AlertDialog>
+                                <Badge variant={propuesta.status === 'Recibida' ? 'default' : 'secondary'} 
+                                    className="bg-blue-50 text-blue-700 hover:bg-blue-100 border-blue-200">
+                                    {propuesta.status || 'Confirmada'}
+                                </Badge>
+                            </div>
                         </div>
                         <div className="mt-4 mb-2">
-                            <PropuestaTimeline currentStatus={propuesta.status || 'Confirmada'} history={propuesta.statusHistory} />
+                            <PropuestaTimeline currentStatus={propuesta.status === 'En Tránsito' ? 'Confirmada' : (propuesta.status || 'Confirmada')} history={propuesta.statusHistory} />
                         </div>
                     </CardHeader>
                     <CardContent className="pt-4 space-y-4">
@@ -194,7 +231,9 @@ export function PropuestasList() {
                         </div>
                         {propuesta.status !== 'Recibida' && (
                             <div className="text-[10px] text-center text-slate-400 w-full">
-                                Próximo estado: <strong className="text-slate-500">{PIPELINE[PIPELINE.indexOf(propuesta.status) + 1]}</strong>
+                                Próximo estado: <strong className="text-slate-500">
+                                    {PIPELINE[PIPELINE.indexOf(propuesta.status === 'En Tránsito' ? 'Confirmada' : (propuesta.status || 'Confirmada')) + 1]}
+                                </strong>
                             </div>
                         )}
                     </CardFooter>
