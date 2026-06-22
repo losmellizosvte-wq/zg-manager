@@ -73,13 +73,19 @@ export default function DashboardPage() {
         return isAfter(dueDate, currentMonthStart) && isBefore(dueDate, currentMonthEnd);
     });
 
-    const totalChequesThisMonth = chequesThisMonth.reduce((sum, c) => sum + parseFloat(c.amount), 0);
-    const debitedThisMonth = chequesThisMonth.filter(c => c.status === 'Debitado').reduce((sum, c) => sum + parseFloat(c.amount), 0);
-    const remainingToCoverThisMonth = totalChequesThisMonth - debitedThisMonth;
+    const emitidosThisMonth = chequesThisMonth.filter(c => !c.type || c.type === 'emitido');
+    const tercerosThisMonth = chequesThisMonth.filter(c => c.type === 'tercero');
+
+    const totalEmitidosThisMonth = emitidosThisMonth.reduce((sum, c) => sum + parseFloat(c.amount), 0);
+    const debitedThisMonth = emitidosThisMonth.filter(c => c.status === 'Debitado').reduce((sum, c) => sum + parseFloat(c.amount), 0);
+    const remainingToCoverThisMonth = totalEmitidosThisMonth - debitedThisMonth;
     
+    const tercerosACobrarThisMonth = tercerosThisMonth.filter(c => c.status !== 'Debitado').reduce((sum, c) => sum + parseFloat(c.amount), 0);
+    const flujoNetoThisMonth = tercerosACobrarThisMonth - remainingToCoverThisMonth;
+
     const totalChequesNextMonth = allCheques.filter(c => {
         const dueDate = new Date(c.dueDate.split('-').join('/'));
-        return isAfter(dueDate, nextMonthStart) && isBefore(dueDate, nextMonthEnd);
+        return (!c.type || c.type === 'emitido') && isAfter(dueDate, nextMonthStart) && isBefore(dueDate, nextMonthEnd);
     }).reduce((sum, c) => sum + parseFloat(c.amount), 0);
     
     const pendingInvoicesAmountThisMonth = allInvoices.filter(inv => {
@@ -89,11 +95,11 @@ export default function DashboardPage() {
     }).reduce((sum, inv) => sum + parseFloat(inv.totalAmount), 0);
 
     return {
-        totalChequesThisMonth,
         remainingToCoverThisMonth,
-        totalChequesNextMonth,
-        chequesThisMonth,
+        tercerosACobrarThisMonth,
+        flujoNetoThisMonth,
         pendingInvoicesAmountThisMonth,
+        emitidosThisMonth,
     };
   }, [allCheques, allInvoices]);
 
@@ -104,11 +110,11 @@ export default function DashboardPage() {
   }
   
   const { 
-    totalChequesThisMonth,
     remainingToCoverThisMonth,
-    totalChequesNextMonth,
+    tercerosACobrarThisMonth,
+    flujoNetoThisMonth,
     pendingInvoicesAmountThisMonth,
-    chequesThisMonth
+    emitidosThisMonth
   } = dashboardData!;
   
   return (
@@ -122,15 +128,15 @@ export default function DashboardPage() {
       />
       
       <StatsCards 
-        totalChequesThisMonth={totalChequesThisMonth}
-        remainingToCoverThisMonth={remainingToCoverThisMonth}
-        totalChequesNextMonth={totalChequesNextMonth}
         pendingInvoicesAmountThisMonth={pendingInvoicesAmountThisMonth}
+        remainingToCoverThisMonth={remainingToCoverThisMonth}
+        tercerosACobrarThisMonth={tercerosACobrarThisMonth}
+        flujoNetoThisMonth={flujoNetoThisMonth}
       />
       
       <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-7">
         <div className="lg:col-span-4">
-            <ChequesChart cheques={chequesThisMonth} />
+            <ChequesChart cheques={emitidosThisMonth} />
         </div>
         <div className="lg:col-span-3">
           <TasksOverview tasks={pendingTasks || []} />

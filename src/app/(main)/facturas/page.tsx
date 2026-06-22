@@ -6,6 +6,7 @@ import { useCollection, useFirestore, useMemoFirebase } from '@/firebase';
 import { collection, query } from 'firebase/firestore';
 import { Invoice, Cheque } from '@/lib/types';
 import { Skeleton } from '@/components/ui/skeleton';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
 function InvoicesSkeleton() {
   return (
@@ -74,13 +75,29 @@ export default function FacturasPage() {
 
   return (
     <div className="space-y-8">
-      <div>
-        <h1 className="text-3xl font-bold tracking-tight">Gestión de Facturas</h1>
-        <p className="text-muted-foreground">
-          Cargue, visualice y administre las facturas de proveedores.
-        </p>
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+        <div>
+          <h1 className="text-3xl font-bold tracking-tight">Gestión de Facturas</h1>
+          <p className="text-muted-foreground">
+            Cargue, visualice y administre facturas comerciales.
+          </p>
+        </div>
       </div>
-      <InvoicesTable invoices={invoices || []} allCheques={allCheques || []} />
+      
+      <Tabs defaultValue="recibidas" className="w-full">
+        <TabsList className="grid w-full max-w-md grid-cols-2 mb-6">
+          <TabsTrigger value="emitidas">Emitidas (Ventas)</TabsTrigger>
+          <TabsTrigger value="recibidas">Recibidas (Gastos)</TabsTrigger>
+        </TabsList>
+        <TabsContent value="emitidas">
+          <div className="text-center py-12 text-muted-foreground border rounded-lg bg-slate-50/50">
+             No hay facturas emitidas registradas.
+          </div>
+        </TabsContent>
+        <TabsContent value="recibidas">
+          <InvoicesTable invoices={invoices || []} allCheques={allCheques || []} />
+        </TabsContent>
+      </Tabs>
     </div>
   );
 }

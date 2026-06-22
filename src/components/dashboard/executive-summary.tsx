@@ -2,7 +2,7 @@
 import * as React from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { BrainCircuit, Loader2 } from 'lucide-react';
+import { BrainCircuit, Loader2, Share2, FileText } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { generateExecutiveSummary } from '@/ai/flows/generate-executive-summary';
 import type { Cheque, Invoice, Task } from '@/lib/types';
@@ -108,16 +108,62 @@ export function ExecutiveSummary({ tasks, cheques, invoices }: ExecutiveSummaryP
             </div>
         )}
         {summary && (
-          <div className="p-4 bg-muted/50 rounded-lg border">
-            <div className="whitespace-pre-wrap font-sans text-sm"
-              dangerouslySetInnerHTML={{
-                  // NOTE: Genkit output is trusted for this prototype
-                  __html: summary
-                      .replace(/### (.*)/g, '<h3 class="text-lg font-semibold mt-4 mb-2">$1</h3>')
-                      .replace(/\*\*(.*?)\*\*/g, '<strong class="font-semibold">$1</strong>')
-                      .replace(/-\s(?!-)/g, '• ')
-              }}
-            />
+          <div className="space-y-4">
+            <div className="p-4 bg-muted/50 rounded-lg border">
+              <div className="whitespace-pre-wrap font-sans text-sm printable-summary"
+                dangerouslySetInnerHTML={{
+                    __html: summary
+                        .replace(/### (.*)/g, '<h3 class="text-lg font-semibold mt-4 mb-2">$1</h3>')
+                        .replace(/\*\*(.*?)\*\*/g, '<strong class="font-semibold">$1</strong>')
+                        .replace(/-\s(?!-)/g, '• ')
+                }}
+              />
+            </div>
+            <div className="flex gap-2 justify-end">
+                <Button 
+                    variant="outline" 
+                    size="sm" 
+                    className="text-emerald-600 border-emerald-200 hover:bg-emerald-50"
+                    onClick={() => {
+                        const text = `*Resumen Ejecutivo ZG MANAGER*\n\n${summary.replace(/### /g, '').replace(/\*\*/g, '*')}`;
+                        window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(text)}`, '_blank');
+                    }}
+                >
+                    <Share2 className="w-4 h-4 mr-2" /> WhatsApp
+                </Button>
+                <Button 
+                    variant="outline" 
+                    size="sm" 
+                    onClick={() => {
+                        // Print the summary
+                        const printWindow = window.open('', '_blank');
+                        if (printWindow) {
+                            printWindow.document.write(`
+                                <html>
+                                <head>
+                                    <title>Resumen Ejecutivo - ZG MANAGER</title>
+                                    <style>
+                                        body { font-family: system-ui, sans-serif; padding: 40px; color: #1e293b; }
+                                        h3 { color: #0f172a; border-bottom: 1px solid #e2e8f0; padding-bottom: 8px; }
+                                        strong { color: #334155; }
+                                    </style>
+                                </head>
+                                <body>
+                                    ${summary
+                                        .replace(/### (.*)/g, '<h3>$1</h3>')
+                                        .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+                                        .replace(/\n/g, '<br>')}
+                                </body>
+                                </html>
+                            `);
+                            printWindow.document.close();
+                            printWindow.print();
+                        }
+                    }}
+                >
+                    <FileText className="w-4 h-4 mr-2" /> PDF / Imprimir
+                </Button>
+            </div>
           </div>
         )}
       </CardContent>

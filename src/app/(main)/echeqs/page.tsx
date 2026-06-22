@@ -6,6 +6,7 @@ import { collection, query } from 'firebase/firestore';
 import { Cheque, Invoice } from '@/lib/types';
 import ChequesTable from "@/components/cheques/cheques-table";
 import { Skeleton } from '@/components/ui/skeleton';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
 function ChequesSkeleton() {
   return (
@@ -76,15 +77,31 @@ export default function EcheqsPage() {
   }
 
 
+  const emitidos = (cheques || []).filter(c => !c.type || c.type === 'emitido');
+  const recibidos = (cheques || []).filter(c => c.type === 'tercero');
+
   return (
     <div className="space-y-8">
-      <div>
-        <h1 className="text-3xl font-bold tracking-tight">Libro de E-Cheqs</h1>
-        <p className="text-muted-foreground">
-          Gestione los cheques emitidos, pendientes y debitados.
-        </p>
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+        <div>
+          <h1 className="text-3xl font-bold tracking-tight">Libro de E-Cheqs</h1>
+          <p className="text-muted-foreground">
+            Gestione los cheques emitidos, pendientes y de terceros.
+          </p>
+        </div>
       </div>
-      <ChequesTable cheques={cheques || []} allInvoices={allInvoices || []} />
+      <Tabs defaultValue="emitidos" className="w-full">
+        <TabsList className="grid w-full max-w-md grid-cols-2 mb-6">
+          <TabsTrigger value="emitidos">Emitidos (Propios)</TabsTrigger>
+          <TabsTrigger value="recibidos">Recibidos (Terceros)</TabsTrigger>
+        </TabsList>
+        <TabsContent value="emitidos">
+          <ChequesTable cheques={emitidos} allInvoices={allInvoices || []} />
+        </TabsContent>
+        <TabsContent value="recibidos">
+          <ChequesTable cheques={recibidos} allInvoices={allInvoices || []} />
+        </TabsContent>
+      </Tabs>
     </div>
   );
 }
