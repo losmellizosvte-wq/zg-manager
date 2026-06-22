@@ -41,6 +41,7 @@ export type Task = {
   completedAt?: any; // Can be Date or Firebase Timestamp
   creatorId: string;
   creationDate: any; // Can be Date or Firebase Timestamp
+  recurrence?: 'none' | 'weekly';
 };
 
 export const executives = ['Ramiro', 'Leandro', 'Milagros'] as const;

@@ -59,3 +59,15 @@ export const sanitizeData = <T extends Record<string, any>>(obj: T): T => {
   
   return sanitized as T;
 };
+
+/**
+ * Calculates string similarity ignoring spaces, punctuation and case.
+ */
+export const isSemanticallySimilar = (s1: string, s2: string): boolean => {
+  if (!s1 || !s2) return false;
+  const normalize = (s: string) => s.toLowerCase().replace(/[^a-z0-9]/g, '');
+  const n1 = normalize(s1);
+  const n2 = normalize(s2);
+  if (!n1 || !n2) return false;
+  return n1.includes(n2) || n2.includes(n1);
+};
