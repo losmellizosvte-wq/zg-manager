@@ -55,8 +55,6 @@ export function StatsCards({
           <p className="text-xs text-muted-foreground">Monto de terceros a cobrar.</p>
         </CardContent>
       </Card>
-
-      </Card>
     </div>
   );
 }

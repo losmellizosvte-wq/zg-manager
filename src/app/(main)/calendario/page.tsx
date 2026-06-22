@@ -6,7 +6,6 @@ import { useCollection, useFirestore, useMemoFirebase } from '@/firebase';
 import { collection, query } from 'firebase/firestore';
 import { Cheque } from '@/lib/types';
 import { Skeleton } from '@/components/ui/skeleton';
-import { Skeleton } from '@/components/ui/skeleton';
 
 function CalendarSkeleton() {
   return (
