@@ -1,0 +1,62 @@
+/**
+ * @description This ruleset allows any authenticated user to read and write invoices, cheques, and tasks.
+ * @dataStructure
+ * - /invoices/{invoiceId}: Stores invoice data.
+ * - /cheques/{chequeId}: Stores cheque data.
+ * - /tasks/{taskId}: Stores task data.
+ * @keySecurityDecisions
+ * - Authenticated users have full read and write access to all documents in the `invoices`, `cheques`, and `tasks` collections.
+ */
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    /**
+     * @description Allows any authenticated user to read or write invoice data.
+     * @path /invoices/{invoiceId}
+     * @allow (read, write): if user is signed in
+     * @deny (read, write): if user is not signed in
+     * @principle Grants read and write access to any signed-in user for all invoice documents.
+     */
+    match /invoices/{invoiceId} {
+      allow read, write: if isSignedIn();
+    }
+
+    /**
+     * @description Allows any authenticated user to read or write cheque data.
+     * @path /cheques/{chequeId}
+     * @allow (read, write): if user is signed in
+     * @deny (read, write): if user is not signed in
+     * @principle Grants read and write access to any signed-in user for all cheque documents.
+     */
+    match /cheques/{chequeId} {
+      allow read, write: if isSignedIn();
+    }
+    
+    /**
+     * @description Allows any authenticated user to read or write task data.
+     * @path /tasks/{taskId}
+     * @allow (read, write): if user is signed in
+     * @deny (read, write): if user is not signed in
+     * @principle Grants read and write access to any signed-in user for all task documents.
+     */
+    match /tasks/{taskId} {
+      allow read, write: if isSignedIn();
+    }
+
+    /**
+     * @description Allows any authenticated user to read or write provider data.
+     * @path /providers/{providerId}
+     * @allow (read, write): if user is signed in
+     * @deny (read, write): if user is not signed in
+     * @principle Grants read and write access to any signed-in user for all provider documents.
+     */
+    match /providers/{providerId} {
+      allow read, write: if isSignedIn();
+    }
+  }
+}
