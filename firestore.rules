@@ -58,5 +58,21 @@ service cloud.firestore {
     match /providers/{providerId} {
       allow read, write: if isSignedIn();
     }
+
+    match /stock_en_transito/{docId} {
+      allow read, write: if isSignedIn();
+    }
+
+    match /propuestas/{docId} {
+      allow read, write: if isSignedIn();
+    }
+
+    match /fcm_tokens/{tokenId} {
+      allow read, write: if isSignedIn();
+    }
+
+    match /pricing_settings/{docId} {
+      allow read, write: if isSignedIn();
+    }
   }
 }
