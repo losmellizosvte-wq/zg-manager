@@ -58,6 +58,7 @@ export function CostSettings({ onSettingsChange }: CostSettingsProps) {
         }
       } catch (error) {
         console.error("Error loading pricing settings:", error);
+        onSettingsChange(DEFAULT_SETTINGS);
       } finally {
         setLoading(false);
       }
