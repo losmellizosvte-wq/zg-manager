@@ -61,8 +61,8 @@ FORMATO DE SALIDA ESTRICTO EN JSON (sin markdown):
   // Agregar la imagen si existe
   if (payload.imageBase64 && payload.imageMimeType) {
     contents.push({
-      inline_data: {
-        mime_type: payload.imageMimeType,
+      inlineData: {
+        mimeType: payload.imageMimeType,
         data: payload.imageBase64,
       }
     });
@@ -81,7 +81,7 @@ FORMATO DE SALIDA ESTRICTO EN JSON (sin markdown):
   });
 
   try {
-    const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-pro:generateContent?key=${apiKey}`, {
+    const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-pro:generateContent?key=${apiKey}`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
