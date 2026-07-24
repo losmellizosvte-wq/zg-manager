@@ -16,7 +16,8 @@ import {
   ListTodo,
   Calculator,
   Building,
-  PackageOpen
+  PackageOpen,
+  DollarSign
 } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -29,6 +30,7 @@ const navItems = [
   { href: "/echeqs", icon: Banknote, label: "E-Cheqs" },
   { href: "/proveedores", icon: Building, label: "Proveedores" },
   { href: "/remitos", icon: PackageOpen, label: "Remitos" },
+  { href: "/pricing", icon: DollarSign, label: "Pricing" },
   { href: "/calendario", icon: CalendarDays, label: "Calendario de Pago" },
   { href: "/tareas", icon: ListTodo, label: "Tareas" },
   { href: "/calculadora", icon: Calculator, label: "Calculadora" },
