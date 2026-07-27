@@ -29,6 +29,10 @@ export default function PricingPage() {
         costsConfig,
       });
 
+      if (!response) {
+        throw new Error("La IA no pudo procesar la imagen (posible imagen demasiado pesada o timeout).");
+      }
+
       if (response.success) {
         setReport(response.data);
       } else {

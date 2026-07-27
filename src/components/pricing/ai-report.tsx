@@ -16,8 +16,10 @@ export function AIReport({ report }: AIReportProps) {
 
   const { extractedData, nationalBenchmark = [], regionalBenchmark = [], financials, verdict } = report;
 
-  const formatCurrency = (value: number) => {
-    return new Intl.NumberFormat('es-AR', { style: 'currency', currency: 'ARS', maximumFractionDigits: 0 }).format(value || 0);
+  const formatCurrency = (value: any) => {
+    const num = Number(value);
+    if (isNaN(num) || value === null || value === undefined) return String(value || 'N/A');
+    return new Intl.NumberFormat('es-AR', { style: 'currency', currency: 'ARS', maximumFractionDigits: 0 }).format(num);
   };
 
   const getVerdictConfig = (status: string) => {

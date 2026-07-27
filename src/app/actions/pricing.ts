@@ -28,11 +28,19 @@ Buscar en vivo en Internet usando tu herramienta Google Search para encontrar pr
    - "Bringeri hogar" (Solo sucursal Laboulaye: https://www.bringeri.com.ar/)
    - Otras mutuales o negocios ubicados exclusivamente en estas localidades).
 
-CRITERIOS FINANCIEROS Y DE COSTOS:
+CRITERIOS FINANCIEROS Y REGLA DE DICTAMEN (¡ESTRICTO!):
 - El "Costo Base" proporcionado por el usuario YA INCLUYE IVA.
-- Usa los porcentajes de la tabla de costos operativos (Logística, Comisión, Picking, Funcionamiento, Bancarios, IIBB) para sumarlos al Costo Base y obtener el Break-even.
-- Los impuestos (IIBB, etc) se calculan sobre el precio de venta final, pero para simplificar, el usuario te pasa los porcentajes. Asume que la suma de porcentajes se agrega al costo para el cálculo del margen.
-- Sugiere un "Precio Contado" y un "Precio Financiado" que garantice el Margen Neto Deseado por el usuario, y que a la vez sea competitivo frente al Benchmark.
+- Usa los porcentajes de la tabla de costos operativos para sumarlos al Costo Base y obtener el Break-even.
+- Sugiere un "Precio Contado" que garantice el Margen Neto Deseado por el usuario.
+- REGLA MATEMÁTICA PARA EL DICTAMEN (No uses opiniones, usa esta regla):
+  * Compara tu "Precio Contado" sugerido con el precio MÁS BAJO encontrado en la competencia (nacional o regional).
+  * Si tu Precio Contado es MENOR O IGUAL al precio más bajo de la competencia -> "VIABLE" (Somos competitivos garantizando el margen).
+  * Si tu Precio Contado es hasta un 10% MAYOR que el precio más bajo de la competencia -> "RIESGOSO" (Estamos caros, pero puede venderse por cercanía o servicio).
+  * Si tu Precio Contado es más de un 10% MAYOR que el precio más bajo de la competencia -> "NO VIABLE" (Quedamos fuera de mercado).
+
+IDENTIFICACIÓN DEL PRODUCTO:
+- Debes buscar el modelo EXACTO. Si encuentras un modelo similar pero no exacto, indícalo CLARAMENTE en el campo "notes" de la tienda (Ej: "Modelo similar: XXX").
+- IMPORTANTE: Para que el reporte no sea demasiado largo, limita nationalBenchmark a MÁXIMO 3 tiendas y regionalBenchmark a MÁXIMO 3 tiendas locales. Selecciona solo las más relevantes y con stock real.
 
 FORMATO DE SALIDA ESTRICTO EN JSON (sin markdown):
 {
@@ -100,7 +108,7 @@ FORMATO DE SALIDA ESTRICTO EN JSON (sin markdown):
         },
         tools: [{ googleSearch: {} }],
         generationConfig: {
-          temperature: 0.2
+          temperature: 0.1
         }
       })
     });
