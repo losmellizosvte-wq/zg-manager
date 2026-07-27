@@ -4,7 +4,7 @@ import * as React from 'react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
-import { CheckCircle2, AlertTriangle, XCircle, ShoppingBag, Store, Info, MapPin, Share2, Printer } from 'lucide-react';
+import { CheckCircle2, AlertTriangle, XCircle, ShoppingBag, Store, Info, MapPin, Share2, Printer, ExternalLink } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
 interface AIReportProps {
@@ -179,6 +179,11 @@ ${regionalBenchmark.map((b: any) => `- ${b.store}: ${formatCurrency(b.price)}`).
                       <div>
                         <div className="font-semibold text-sm text-slate-800">{b.store}</div>
                         {b.notes && <div className="text-[10px] text-slate-500 mt-0.5">{b.notes}</div>}
+                        {b.url && (
+                          <a href={b.url} target="_blank" rel="noopener noreferrer" className="text-[10px] text-blue-500 hover:underline flex items-center gap-1 mt-1 print:hidden">
+                            <ExternalLink className="w-3 h-3" /> Ver fuente
+                          </a>
+                        )}
                       </div>
                       <div className="font-bold text-slate-800 bg-white border px-2 py-1 print:border-none print:px-0 rounded-md shadow-sm print:shadow-none">
                         {formatCurrency(b.price)}
@@ -209,6 +214,11 @@ ${regionalBenchmark.map((b: any) => `- ${b.store}: ${formatCurrency(b.price)}`).
                           <Store className="w-3 h-3 text-slate-400"/> {b.store}
                         </div>
                         {b.notes && <div className="text-[10px] text-slate-500 mt-0.5">{b.notes}</div>}
+                        {b.url && (
+                          <a href={b.url} target="_blank" rel="noopener noreferrer" className="text-[10px] text-blue-500 hover:underline flex items-center gap-1 mt-1 print:hidden">
+                            <ExternalLink className="w-3 h-3" /> Ver fuente
+                          </a>
+                        )}
                       </div>
                       <div className="font-bold text-slate-800 bg-white border px-2 py-1 print:border-none print:px-0 rounded-md shadow-sm print:shadow-none">
                         {formatCurrency(b.price)}
