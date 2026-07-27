@@ -6,8 +6,6 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
 import { Save, Settings2 } from 'lucide-react';
-import { useFirestore } from '@/firebase';
-import { doc, getDoc, setDoc } from 'firebase/firestore';
 import { useToast } from '@/hooks/use-toast';
 
 export interface PricingSettings {
@@ -37,34 +35,28 @@ interface CostSettingsProps {
 }
 
 export function CostSettings({ onSettingsChange }: CostSettingsProps) {
-  const firestore = useFirestore();
   const { toast } = useToast();
   const [settings, setSettings] = React.useState<PricingSettings>(DEFAULT_SETTINGS);
   const [loading, setLoading] = React.useState(true);
   const [saving, setSaving] = React.useState(false);
 
   React.useEffect(() => {
-    async function loadSettings() {
-      if (!firestore) return;
-      try {
-        const docRef = doc(firestore, 'pricing_settings', 'default');
-        const docSnap = await getDoc(docRef);
-        if (docSnap.exists()) {
-          const data = docSnap.data() as PricingSettings;
-          setSettings(data);
-          onSettingsChange(data);
-        } else {
-          onSettingsChange(DEFAULT_SETTINGS);
-        }
-      } catch (error) {
-        console.error("Error loading pricing settings:", error);
+    try {
+      const saved = localStorage.getItem('zg_pricing_settings');
+      if (saved) {
+        const data = JSON.parse(saved) as PricingSettings;
+        setSettings(data);
+        onSettingsChange(data);
+      } else {
         onSettingsChange(DEFAULT_SETTINGS);
-      } finally {
-        setLoading(false);
       }
+    } catch (error) {
+      console.error("Error loading pricing settings from local storage:", error);
+      onSettingsChange(DEFAULT_SETTINGS);
+    } finally {
+      setLoading(false);
     }
-    loadSettings();
-  }, [firestore, onSettingsChange]); // Wait, onSettingsChange shouldn't be in dependency array unless it's a stable ref, but it's safe to run once if we structure it carefully. Actually, let's omit it to prevent infinite loops, or use it only on mount.
+  }, [onSettingsChange]); // Wait, onSettingsChange shouldn't be in dependency array unless it's a stable ref, but it's safe to run once if we structure it carefully. Actually, let's omit it to prevent infinite loops, or use it only on mount.
   // We'll leave it as is, but be mindful of infinite loops. 
 
   const handleChange = (key: keyof PricingSettings, value: string) => {
@@ -74,14 +66,13 @@ export function CostSettings({ onSettingsChange }: CostSettingsProps) {
     onSettingsChange(newSettings); // Propagate instantly to parent for analysis
   };
 
-  const handleSaveDefault = async () => {
-    if (!firestore) return;
+  const handleSaveDefault = () => {
     setSaving(true);
     try {
-      await setDoc(doc(firestore, 'pricing_settings', 'default'), settings);
-      toast({ title: 'Plantilla Guardada', description: 'Los costos operativos han sido actualizados por defecto.' });
+      localStorage.setItem('zg_pricing_settings', JSON.stringify(settings));
+      toast({ title: 'Plantilla Guardada', description: 'Los costos operativos han sido guardados en este dispositivo.' });
     } catch (error: any) {
-      toast({ variant: 'destructive', title: 'Error', description: error.message });
+      toast({ variant: 'destructive', title: 'Error', description: 'No se pudo guardar la plantilla localmente.' });
     } finally {
       setSaving(false);
     }

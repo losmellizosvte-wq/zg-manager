@@ -4,7 +4,8 @@ import * as React from 'react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
-import { CheckCircle2, AlertTriangle, XCircle, ShoppingBag, Store, Info, MapPin } from 'lucide-react';
+import { CheckCircle2, AlertTriangle, XCircle, ShoppingBag, Store, Info, MapPin, Share2, Printer } from 'lucide-react';
+import { Button } from '@/components/ui/button';
 
 interface AIReportProps {
   report: any;
@@ -31,8 +32,37 @@ export function AIReport({ report }: AIReportProps) {
   const vConfig = getVerdictConfig(verdict?.status);
   const VIcon = vConfig.icon;
 
+  const handleWhatsAppShare = () => {
+    const text = `📊 *Análisis de Pricing ZG Manager*
+🛒 *Producto:* ${extractedData?.productName || 'N/A'}
+
+💰 *Costo Base:* ${formatCurrency(financials?.baseCost)}
+⚖️ *Punto Equilibrio:* ${formatCurrency(financials?.breakevenAmount)} (+${financials?.totalCostPercentage}%)
+🎯 *Precio Sugerido:* ${formatCurrency(financials?.suggestedCashPrice)}
+💵 *Margen Proyectado:* ${formatCurrency(financials?.projectedMarginAmount)}
+
+⚖️ *Dictamen:* ${verdict?.status}
+📝 ${verdict?.reasoning}
+
+🏢 *Competencia Nacional:*
+${nationalBenchmark.map((b: any) => `- ${b.store}: ${formatCurrency(b.price)}`).join('\n') || 'Sin datos'}
+
+📍 *Competencia Regional:*
+${regionalBenchmark.map((b: any) => `- ${b.store}: ${formatCurrency(b.price)}`).join('\n') || 'Sin datos'}`;
+    
+    window.open(`https://wa.me/?text=${encodeURIComponent(text)}`, '_blank');
+  };
+
   return (
-    <div className="space-y-6">
+    <div className="space-y-6" id="ai-report-container">
+      <div className="flex justify-end gap-2 print:hidden mb-[-1rem] z-10 relative">
+        <Button variant="outline" size="sm" onClick={() => window.print()} className="h-8 text-xs bg-white">
+          <Printer className="w-3 h-3 mr-2" /> PDF / Imprimir
+        </Button>
+        <Button variant="default" size="sm" onClick={handleWhatsAppShare} className="h-8 text-xs bg-green-600 hover:bg-green-700 text-white">
+          <Share2 className="w-3 h-3 mr-2" /> Enviar por WhatsApp
+        </Button>
+      </div>
       
       {/* 1. Header y Dictamen */}
       <Card className={`border-2 ${vConfig.border} shadow-sm overflow-hidden`}>
