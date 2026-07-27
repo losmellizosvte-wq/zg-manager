@@ -54,7 +54,26 @@ ${regionalBenchmark.map((b: any) => `- ${b.store}: ${formatCurrency(b.price)}`).
   };
 
   return (
-    <div className="space-y-6" id="ai-report-container">
+    <div className="space-y-6 print:space-y-4 print:w-[190mm]" id="ai-report-container">
+      <style dangerouslySetInnerHTML={{ __html: `
+        @media print {
+          @page { size: A4; margin: 10mm; }
+          body { background: white !important; }
+          /* Esconder elementos de NextJS de layout general (Sidebar, Header, etc) */
+          nav, aside, header, [data-sidebar="sidebar"] { display: none !important; }
+        }
+      `}} />
+
+      <div className="hidden print:flex items-center gap-4 mb-4 border-b pb-2">
+        <div className="w-10 h-10 bg-slate-900 text-white font-bold rounded-lg flex items-center justify-center text-lg">
+          ZG
+        </div>
+        <div>
+          <h1 className="text-xl font-bold text-slate-900">Analista de Pricing y Mercado (IA)</h1>
+          <p className="text-xs text-slate-500">ZAWADZKI GROUP - Confidencial</p>
+        </div>
+      </div>
+
       <div className="flex justify-end gap-2 print:hidden mb-[-1rem] z-10 relative">
         <Button variant="outline" size="sm" onClick={() => window.print()} className="h-8 text-xs bg-white">
           <Printer className="w-3 h-3 mr-2" /> PDF / Imprimir
@@ -65,8 +84,8 @@ ${regionalBenchmark.map((b: any) => `- ${b.store}: ${formatCurrency(b.price)}`).
       </div>
       
       {/* 1. Header y Dictamen */}
-      <Card className={`border-2 ${vConfig.border} shadow-sm overflow-hidden`}>
-        <div className={`px-6 py-4 flex items-center gap-4 ${vConfig.bg} bg-opacity-50`}>
+      <Card className={`border-2 ${vConfig.border} shadow-sm overflow-hidden print:border-none print:shadow-none print:break-inside-avoid`}>
+        <div className={`px-6 py-4 flex items-center gap-4 ${vConfig.bg} bg-opacity-50 print:px-0 print:py-2 print:bg-transparent`}>
           <div className={`p-3 bg-white rounded-full shadow-sm ${vConfig.color}`}>
             <VIcon className="w-8 h-8" />
           </div>
@@ -108,41 +127,41 @@ ${regionalBenchmark.map((b: any) => `- ${b.store}: ${formatCurrency(b.price)}`).
       </Card>
 
       {/* 2. Análisis Financiero */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        <Card className="shadow-sm border-slate-200">
-          <CardContent className="p-4 flex flex-col justify-center">
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 print:grid-cols-4 print:gap-2 print:break-inside-avoid">
+        <Card className="shadow-sm border-slate-200 print:shadow-none print:border-b">
+          <CardContent className="p-4 print:p-2 flex flex-col justify-center">
             <span className="text-[10px] uppercase font-semibold text-slate-400">Costo Base (c/ IVA)</span>
-            <span className="text-xl font-bold text-slate-800">{formatCurrency(financials?.baseCost)}</span>
+            <span className="text-xl font-bold text-slate-800 print:text-lg">{formatCurrency(financials?.baseCost)}</span>
           </CardContent>
         </Card>
-        <Card className="shadow-sm border-slate-200 bg-slate-50">
-          <CardContent className="p-4 flex flex-col justify-center">
+        <Card className="shadow-sm border-slate-200 bg-slate-50 print:bg-white print:shadow-none print:border-b">
+          <CardContent className="p-4 print:p-2 flex flex-col justify-center">
             <span className="text-[10px] uppercase font-semibold text-slate-500">Punto de Equilibrio</span>
             <div className="flex items-end gap-2">
-                <span className="text-xl font-bold text-slate-700">{formatCurrency(financials?.breakevenAmount)}</span>
+                <span className="text-xl font-bold text-slate-700 print:text-lg">{formatCurrency(financials?.breakevenAmount)}</span>
                 <span className="text-[10px] text-slate-400 pb-1">(+{financials?.totalCostPercentage}%)</span>
             </div>
           </CardContent>
         </Card>
-        <Card className="shadow-sm border-blue-200 bg-blue-50/30">
-          <CardContent className="p-4 flex flex-col justify-center">
+        <Card className="shadow-sm border-blue-200 bg-blue-50/30 print:bg-white print:shadow-none print:border-b">
+          <CardContent className="p-4 print:p-2 flex flex-col justify-center">
             <span className="text-[10px] uppercase font-semibold text-blue-600">Precio Sugerido (Contado)</span>
-            <span className="text-2xl font-black text-blue-700">{formatCurrency(financials?.suggestedCashPrice)}</span>
+            <span className="text-2xl font-black text-blue-700 print:text-xl">{formatCurrency(financials?.suggestedCashPrice)}</span>
           </CardContent>
         </Card>
-        <Card className="shadow-sm border-emerald-200 bg-emerald-50/30">
-          <CardContent className="p-4 flex flex-col justify-center">
+        <Card className="shadow-sm border-emerald-200 bg-emerald-50/30 print:bg-white print:shadow-none print:border-b">
+          <CardContent className="p-4 print:p-2 flex flex-col justify-center">
             <span className="text-[10px] uppercase font-semibold text-emerald-600">Margen Proyectado</span>
-            <span className="text-2xl font-black text-emerald-700">{formatCurrency(financials?.projectedMarginAmount)}</span>
+            <span className="text-2xl font-black text-emerald-700 print:text-xl">{formatCurrency(financials?.projectedMarginAmount)}</span>
           </CardContent>
         </Card>
       </div>
 
       {/* 3. Benchmark */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 print:grid-cols-2 print:gap-4 print:break-inside-avoid">
         
-        <Card className="shadow-sm">
-          <CardHeader className="pb-3 border-b bg-slate-50/50">
+        <Card className="shadow-sm print:shadow-none print:border">
+          <CardHeader className="pb-3 border-b bg-slate-50/50 print:bg-white print:pb-2 print:pt-3">
             <CardTitle className="text-sm font-semibold flex items-center gap-2 text-slate-700">
               <ShoppingBag className="w-4 h-4 text-blue-500" />
               Benchmark Nacional (Retail)
@@ -154,12 +173,12 @@ ${regionalBenchmark.map((b: any) => `- ${b.store}: ${formatCurrency(b.price)}`).
              ) : (
                 <div className="divide-y">
                   {nationalBenchmark.map((b: any, i: number) => (
-                    <div key={i} className="flex justify-between items-center p-4 hover:bg-slate-50 transition-colors">
+                    <div key={i} className="flex justify-between items-center p-4 print:p-2 hover:bg-slate-50 transition-colors">
                       <div>
                         <div className="font-semibold text-sm text-slate-800">{b.store}</div>
                         {b.notes && <div className="text-[10px] text-slate-500 mt-0.5">{b.notes}</div>}
                       </div>
-                      <div className="font-bold text-slate-800 bg-white border px-2 py-1 rounded-md shadow-sm">
+                      <div className="font-bold text-slate-800 bg-white border px-2 py-1 print:border-none print:px-0 rounded-md shadow-sm print:shadow-none">
                         {formatCurrency(b.price)}
                       </div>
                     </div>
@@ -169,8 +188,8 @@ ${regionalBenchmark.map((b: any) => `- ${b.store}: ${formatCurrency(b.price)}`).
           </CardContent>
         </Card>
 
-        <Card className="shadow-sm">
-          <CardHeader className="pb-3 border-b bg-amber-50/50">
+        <Card className="shadow-sm print:shadow-none print:border">
+          <CardHeader className="pb-3 border-b bg-amber-50/50 print:bg-white print:pb-2 print:pt-3">
             <CardTitle className="text-sm font-semibold flex items-center gap-2 text-amber-800">
               <MapPin className="w-4 h-4 text-amber-500" />
               Benchmark Regional (Mutuales/Locales)
@@ -182,14 +201,14 @@ ${regionalBenchmark.map((b: any) => `- ${b.store}: ${formatCurrency(b.price)}`).
              ) : (
                 <div className="divide-y">
                   {regionalBenchmark.map((b: any, i: number) => (
-                    <div key={i} className="flex justify-between items-center p-4 hover:bg-amber-50/30 transition-colors">
+                    <div key={i} className="flex justify-between items-center p-4 print:p-2 hover:bg-amber-50/30 transition-colors">
                       <div>
                         <div className="font-semibold text-sm text-slate-800 flex items-center gap-1">
                           <Store className="w-3 h-3 text-slate-400"/> {b.store}
                         </div>
                         {b.notes && <div className="text-[10px] text-slate-500 mt-0.5">{b.notes}</div>}
                       </div>
-                      <div className="font-bold text-slate-800 bg-white border px-2 py-1 rounded-md shadow-sm">
+                      <div className="font-bold text-slate-800 bg-white border px-2 py-1 print:border-none print:px-0 rounded-md shadow-sm print:shadow-none">
                         {formatCurrency(b.price)}
                       </div>
                     </div>

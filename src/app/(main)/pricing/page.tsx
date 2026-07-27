@@ -42,23 +42,23 @@ export default function PricingPage() {
   };
 
   return (
-    <div className="flex flex-col gap-6 p-6 pb-24 max-w-7xl mx-auto">
-      <div>
+    <div className="flex flex-col gap-6 p-6 pb-24 max-w-7xl mx-auto print:p-0 print:m-0 print:block">
+      <div className="print:hidden">
         <h1 className="text-2xl font-bold tracking-tight text-slate-900">Analista de Pricing y Mercado (IA)</h1>
         <p className="text-sm text-slate-500 mt-1">
           Evalúa propuestas comerciales, calcula rentabilidad y busca precios de referencia en tiempo real.
         </p>
       </div>
 
-      <div className="grid grid-cols-1 xl:grid-cols-3 gap-6 items-start">
+      <div className="grid grid-cols-1 xl:grid-cols-3 gap-6 items-start print:block print:w-full">
         {/* Columna Izquierda: Configuración y Formulario */}
-        <div className="xl:col-span-1 space-y-6">
+        <div className="xl:col-span-1 space-y-6 print:hidden">
           <CostSettings onSettingsChange={setCostsConfig} />
           <OpportunityForm onAnalyze={handleAnalyze} isLoading={isLoading} />
         </div>
 
         {/* Columna Derecha: Reporte */}
-        <div className="xl:col-span-2">
+        <div className="xl:col-span-2 print:w-full print:block">
           {isLoading && (
             <div className="flex flex-col items-center justify-center h-64 border-2 border-dashed rounded-xl bg-slate-50/50">
               <div className="w-8 h-8 border-4 border-blue-500 border-t-transparent rounded-full animate-spin mb-4"></div>

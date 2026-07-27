@@ -19,13 +19,14 @@ TU MISIÓN:
 Analizar la propuesta comercial (imagen o texto).
 Buscar en vivo en Internet usando tu herramienta Google Search para encontrar precios de la competencia en Argentina, diviendo la búsqueda en 2 niveles:
 1. Nacional (MercadoLibre, Frávega, Cetrogar, Megatone, Naldo, On City, Coppel, etc.).
-2. Regional (busca explícitamente en:
+2. Regional (CRÍTICO: limítate estrictamente a las localidades de Viamonte, La Cesira, Pueblo Italiano, Canals, Alejo Ledesma y Arias en la provincia de Córdoba. IGNORA resultados de otras provincias o zonas alejadas. Busca explícitamente en:
    - "Casa Jae" (Canals, Instagram: Jaehogar)
    - "San Miguel Center" (https://sanmiguelcenter.com.ar/)
    - "Casa Diez" (Alejo Ledesma)
    - "Petenatti Hogar" (Arias, Córdoba, https://www.petenattihogar.com.ar/)
-   - "Bringeri hogar sucursal laboulaye" (https://www.bringeri.com.ar/)
-   - Y otras mutuales o negocios de la zona de Laboulaye, Rufino, Canals, Alejo Ledesma).
+   - "Casa Suita" (Instagram: CasaSuita)
+   - "Bringeri hogar" (Solo sucursal Laboulaye: https://www.bringeri.com.ar/)
+   - Otras mutuales o negocios ubicados exclusivamente en estas localidades).
 
 CRITERIOS FINANCIEROS Y DE COSTOS:
 - El "Costo Base" proporcionado por el usuario YA INCLUYE IVA.
