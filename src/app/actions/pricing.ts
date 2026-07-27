@@ -93,7 +93,6 @@ FORMATO DE SALIDA ESTRICTO EN JSON (sin markdown):
         },
         tools: [{ googleSearch: {} }],
         generationConfig: {
-          responseMimeType: "application/json",
           temperature: 0.2
         }
       })
@@ -106,10 +105,13 @@ FORMATO DE SALIDA ESTRICTO EN JSON (sin markdown):
     }
 
     const data = await response.json();
-    const rawText = data.candidates[0].content.parts[0].text;
+    let rawText = data.candidates[0].content.parts[0].text;
     
     // Check if grounding metadata is present (meaning Google Search was used)
     const searchUsed = !!data.candidates[0].groundingMetadata;
+
+    // Clean markdown code blocks if the model wrapped the JSON
+    rawText = rawText.replace(/```json/g, '').replace(/```/g, '').trim();
 
     return {
       success: true,
