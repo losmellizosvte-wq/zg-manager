@@ -21,7 +21,9 @@ Buscar en vivo en Internet usando tu herramienta Google Search para encontrar pr
 1. Nacional (Top Retails, MercadoLibre y Oficiales): EXCLUYE a todos los comercios menores. Para asegurarte, usa consultas de búsqueda con el operador "site:", por ejemplo: [producto] site:mercadolibre.com.ar OR site:fravega.com.ar OR site:cetrogar.com.ar OR site:oncity.com.ar OR site:naldo.com.ar OR site:musimundo.com OR site:pardo.com.ar OR (Tiendas oficiales de marcas en Argentina como Newsan, Samsung, BGH, Philips, etc). (Grandes cadenas y marcas únicamente).
 2. Regional (NUESTRO MERCADO PRINCIPAL Y VERDADERA COMPETENCIA): Limítate a la zona sur de Córdoba: Viamonte (C.P. X2671, Provincia de Córdoba - ¡ATENCIÓN! NO confundir con General Viamonte de Buenos Aires), La Cesira, Pueblo Italiano, Canals, Alejo Ledesma, Benjamin Gould, Arias, Laboulaye. Busca en: Casa Jae (Canals), San Miguel Center, Casa Diez, Petenatti Hogar, Casa Suita, Bringeri Laboulaye. Ten en cuenta que culturalmente el cliente de esta zona NO suele comprar a Buenos Aires, prefiere comprar en pueblos cercanos y retirar.
 
-REGLAS DE FILTRADO DE ANOMALÍAS (¡MUY IMPORTANTE!):
+REGLAS DE IDENTIFICACIÓN Y FILTRADO (¡CERO TOLERANCIA A ERRORES!):
+- NO inventes precios. Si no encuentras el modelo EXACTO en una tienda, NO pongas un modelo diferente. Es preferible que devuelvas la lista vacía o pongas menos resultados antes que poner un modelo equivocado.
+- Para el Benchmark Nacional, TIENES PROHIBIDO incluir en el JSON comercios que no sean MercadoLibre, Frávega, Cetrogar, OnCity, Naldo, Musimundo, Pardo o Tiendas Oficiales. Si encuentras otro comercio, IGNÓRALO POR COMPLETO.
 - Descarta automáticamente precios que sean absurdamente bajos (ej. 40% más baratos que el promedio). Suelen ser repuestos, productos usados, o páginas desactualizadas.
 - OBLIGATORIO: Debes incluir el LINK REAL (URL) de donde sacaste el precio para que el usuario pueda verificarlo.
 
@@ -89,12 +91,16 @@ FORMATO DE SALIDA ESTRICTO EN JSON (sin markdown):
     text: JSON.stringify(promptData)
   });
 
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), 25000); // 25 seconds timeout to prevent infinite loading
+
   try {
     const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
+      signal: controller.signal,
       body: JSON.stringify({
         contents: [{ role: "user", parts: contents }],
         systemInstruction: {
@@ -107,8 +113,10 @@ FORMATO DE SALIDA ESTRICTO EN JSON (sin markdown):
       })
     });
 
+    clearTimeout(timeoutId);
+
     if (!response.ok) {
-      const errorData = await response.json();
+      const errorData = await response.json().catch(() => ({}));
       console.error("Gemini API Error:", errorData);
       throw new Error(`Gemini API Error: ${response.statusText}`);
     }
