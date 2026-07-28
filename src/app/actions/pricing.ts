@@ -21,8 +21,8 @@ Buscar en vivo en Internet usando tu herramienta Google Search para encontrar pr
 1. Nacional (Top Retails, MercadoLibre y Oficiales): EXCLUYE a todos los comercios menores. Para asegurarte, usa consultas de búsqueda con el operador "site:", por ejemplo: [producto] site:mercadolibre.com.ar OR site:fravega.com.ar OR site:cetrogar.com.ar OR site:oncity.com.ar OR site:naldo.com.ar OR site:musimundo.com OR site:pardo.com.ar OR (Tiendas oficiales de marcas en Argentina como Newsan, Samsung, BGH, Philips, etc). (Grandes cadenas y marcas únicamente).
 2. Regional (NUESTRO MERCADO PRINCIPAL Y VERDADERA COMPETENCIA): Limítate a la zona sur de Córdoba: Viamonte (C.P. X2671, Provincia de Córdoba - ¡ATENCIÓN! NO confundir con General Viamonte de Buenos Aires), La Cesira, Pueblo Italiano, Canals, Alejo Ledesma, Benjamin Gould, Arias, Laboulaye. Busca en: Casa Jae (Canals), San Miguel Center, Casa Diez, Petenatti Hogar, Casa Suita, Bringeri Laboulaye. Ten en cuenta que culturalmente el cliente de esta zona NO suele comprar a Buenos Aires, prefiere comprar en pueblos cercanos y retirar.
 
-REGLAS DE IDENTIFICACIÓN Y FILTRADO (¡CERO TOLERANCIA A ERRORES!):
-- NO inventes precios. Si no encuentras el modelo EXACTO en una tienda, NO pongas un modelo diferente. Es preferible que devuelvas la lista vacía o pongas menos resultados antes que poner un modelo equivocado.
+REGLAS DE IDENTIFICACIÓN Y FILTRADO (¡CERO TOLERANCIA A INVENTOS!):
+- NO inventes precios de productos completamente distintos. Si el modelo no coincide exactamente, pero es CLARAMENTE el mismo producto (ej. variaciones menores en el código o color), puedes incluirlo pero ACLÁRALO en "notes".
 - Para el Benchmark Nacional, TIENES PROHIBIDO incluir en el JSON comercios que no sean MercadoLibre, Frávega, Cetrogar, OnCity, Naldo, Musimundo, Pardo o Tiendas Oficiales. Si encuentras otro comercio, IGNÓRALO POR COMPLETO.
 - Descarta automáticamente precios que sean absurdamente bajos (ej. 40% más baratos que el promedio). Suelen ser repuestos, productos usados, o páginas desactualizadas.
 - OBLIGATORIO: Debes incluir el LINK REAL (URL) de donde sacaste el precio para que el usuario pueda verificarlo.
@@ -92,7 +92,7 @@ FORMATO DE SALIDA ESTRICTO EN JSON (sin markdown):
   });
 
   const controller = new AbortController();
-  const timeoutId = setTimeout(() => controller.abort(), 25000); // 25 seconds timeout to prevent infinite loading
+  const timeoutId = setTimeout(() => controller.abort(), 60000); // 60 seconds timeout
 
   try {
     const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`, {
@@ -122,7 +122,16 @@ FORMATO DE SALIDA ESTRICTO EN JSON (sin markdown):
     }
 
     const data = await response.json();
-    let rawText = data.candidates[0].content.parts[0].text;
+    
+    if (!data.candidates || data.candidates.length === 0) {
+      console.error("Gemini no devolvió candidatos:", data);
+      throw new Error(data.promptFeedback?.blockReason ? "La IA bloqueó la consulta por políticas de seguridad." : "La IA de Google no devolvió ningún resultado. Intenta simplificar el nombre del producto.");
+    }
+
+    let rawText = data.candidates[0]?.content?.parts?.[0]?.text;
+    if (!rawText) {
+      throw new Error("La IA devolvió una respuesta vacía o falló la búsqueda en Google.");
+    }
     
     // Check if grounding metadata is present (meaning Google Search was used)
     const searchUsed = !!data.candidates[0].groundingMetadata;
@@ -130,11 +139,17 @@ FORMATO DE SALIDA ESTRICTO EN JSON (sin markdown):
     // Clean markdown code blocks if the model wrapped the JSON
     rawText = rawText.replace(/```json/g, '').replace(/```/g, '').trim();
 
-    return {
-      success: true,
-      data: JSON.parse(rawText),
-      searchUsed
-    };
+    try {
+      const parsedData = JSON.parse(rawText);
+      return {
+        success: true,
+        data: parsedData,
+        searchUsed
+      };
+    } catch (parseError) {
+      console.error("Error parseando JSON de Gemini:", rawText);
+      throw new Error("La IA no pudo formatear los datos correctamente. Intenta de nuevo.");
+    }
 
   } catch (error: any) {
     console.error("Pricing Analysis Error:", error);
