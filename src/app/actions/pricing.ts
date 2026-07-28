@@ -22,7 +22,8 @@ Buscar en vivo en Internet usando tu herramienta Google Search para encontrar pr
 2. Regional (NUESTRO MERCADO PRINCIPAL Y VERDADERA COMPETENCIA): Limítate a la zona sur de Córdoba: Viamonte (C.P. X2671, Provincia de Córdoba - ¡ATENCIÓN! NO confundir con General Viamonte de Buenos Aires), La Cesira, Pueblo Italiano, Canals, Alejo Ledesma, Benjamin Gould, Arias, Laboulaye. Busca en: Casa Jae (Canals), San Miguel Center, Casa Diez, Petenatti Hogar, Casa Suita, Bringeri Laboulaye. Ten en cuenta que culturalmente el cliente de esta zona NO suele comprar a Buenos Aires, prefiere comprar en pueblos cercanos y retirar.
 
 REGLAS DE IDENTIFICACIÓN Y FILTRADO (¡CERO TOLERANCIA A INVENTOS!):
-- NO inventes precios de productos completamente distintos. Si el modelo no coincide exactamente, pero es CLARAMENTE el mismo producto (ej. variaciones menores en el código o color), puedes incluirlo pero ACLÁRALO en "notes".
+- BÚSQUEDA DE SIMILARES (ESENCIAL): Si NO encuentras el modelo EXACTO (especialmente en el mercado Regional), es VITAL que busques y traigas el producto MÁS SIMILAR POSIBLE de la misma categoría (mismas especificaciones, tamaño, prestaciones). Queremos tener claridad de todo el mercado.
+- ACLARACIÓN OBLIGATORIA: Si incluyes un producto que no es exactamente el modelo buscado, es OBLIGATORIO que lo aclares en el campo "notes" (Ej: "Modelo similar: Marca X Modelo Y - Mismas frigorías").
 - Para el Benchmark Nacional, TIENES PROHIBIDO incluir en el JSON comercios que no sean MercadoLibre, Frávega, Cetrogar, OnCity, Naldo, Musimundo, Pardo o Tiendas Oficiales. Si encuentras otro comercio, IGNÓRALO POR COMPLETO.
 - Descarta automáticamente precios que sean absurdamente bajos (ej. 40% más baratos que el promedio). Suelen ser repuestos, productos usados, o páginas desactualizadas.
 - OBLIGATORIO: Debes incluir el LINK REAL (URL) de donde sacaste el precio para que el usuario pueda verificarlo.
@@ -30,13 +31,14 @@ REGLAS DE IDENTIFICACIÓN Y FILTRADO (¡CERO TOLERANCIA A INVENTOS!):
 CRITERIOS FINANCIEROS Y REGLA DE DICTAMEN (¡ESTRICTO!):
 - El "Costo Base" proporcionado por el usuario YA INCLUYE IVA.
 - Usa los porcentajes de la tabla de costos operativos para sumarlos al Costo Base y obtener el Break-even.
-- REGLA MATEMÁTICA PARA EL DICTAMEN:
-  * Paso 1: Encuentra el precio más bajo Regional. (¡Este es tu competidor principal real por cuestiones culturales!).
-  * Paso 2: Encuentra el precio más bajo Nacional. SÚMALE un costo de Flete Realista desde Buenos Aires/Rosario hasta Viamonte, Córdoba (CP X2671). Calcula un mínimo de $25.000 ARS (por correos como Andreani o Correo Argentino) o un 10-15% del valor del producto para bultos grandes, EL QUE SEA MAYOR. Además, sumale un factor de "fricción cultural" porque la gente prefiere evitar traer cosas de lejos.
-  * Paso 3: Toma el menor valor entre el Regional y el Nacional Ajustado con Flete. Este será tu "Precio a Vencer".
-  * Si tu Precio Contado Sugerido (que garantiza el margen) es MENOR O IGUAL al "Precio a Vencer" -> "VIABLE".
-  * Si tu Precio Contado Sugerido es hasta un 5% MAYOR que el "Precio a Vencer" -> "RIESGOSO" (pero con altas chances de éxito por la preferencia local).
-  * Si tu Precio Contado Sugerido es más de un 5% MAYOR que el "Precio a Vencer" -> "NO VIABLE".
+- REGLA MATEMÁTICA PARA EL DICTAMEN (Resistente a faltas de datos):
+  * El Benchmark Nacional es OBLIGATORIO traerlo como REFERENCIA para saber a qué precio lo ven los clientes en internet. Pero para productos grandes (como bicicletas, heladeras), el cliente NO los comprará en Buenos Aires.
+  * Paso 1: Encuentra el precio más bajo Regional. (Este es tu VERDADERO competidor a vencer).
+  * Paso 2: Si NO encuentras precios Regionales, usa el precio más bajo Nacional y SÚMALE un costo de Flete Realista desde BsAs/Rosario (mínimo $25.000 ARS o 15% del valor). Si HAY precio Regional, ignora el Nacional para el cálculo de viabilidad.
+  * Paso 3: Toma el precio determinado en Paso 1 (o Paso 2 si no hay regional). Este será tu "Precio a Vencer". Si no encontraste NINGÚN precio, asume que es VIABLE por ser exclusivo.
+  * Si tu Precio Contado Sugerido es MENOR O IGUAL al "Precio a Vencer" -> "VIABLE".
+  * Si tu Precio Contado Sugerido es hasta un 8% MAYOR que el "Precio a Vencer" -> "RIESGOSO" (pero con altas chances de éxito por la preferencia local).
+  * Si tu Precio Contado Sugerido es más de un 8% MAYOR que el "Precio a Vencer" -> "NO VIABLE".
 
 FORMATO DE SALIDA ESTRICTO EN JSON (sin markdown):
 {
