@@ -1,0 +1,28 @@
+{
+  "placeholderImages": [
+    {
+      "id": "invoice-1",
+      "description": "Sample invoice document",
+      "imageUrl": "https://images.unsplash.com/photo-1696831519501-e4a0515a9a2c?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw5fHxpbnZvaWNlJTIwZG9jdW1lbnR8ZW58MHx8fHwxNzU5NjE5MzczfDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "invoice document"
+    },
+    {
+      "id": "invoice-2",
+      "description": "Another sample invoice",
+      "imageUrl": "https://images.unsplash.com/photo-1755675999604-27cf08957f7b?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw0fHxyZWNlaXB0JTIwcGFwZXJ8ZW58MHx8fHwxNzU5NTY2NTc3fDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "receipt paper"
+    },
+    {
+      "id": "cheque-1",
+      "description": "Sample cheque",
+      "imageUrl": "https://images.unsplash.com/photo-1676151863828-5774d01de34b?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxiYW5rJTIwY2hlcXVlfGVufDB8fHx8MTc1OTYxOTM3M3ww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "bank cheque"
+    },
+    {
+      "id": "cheque-2",
+      "description": "Another sample cheque",
+      "imageUrl": "https://images.unsplash.com/photo-1749491863374-cd50587348c6?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw4fHxwYXltZW50JTIwY2hlY2t8ZW58MHx8fHwxNzU5NjE5MzczfDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "payment check"
+    }
+  ]
+}
