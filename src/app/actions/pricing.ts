@@ -18,11 +18,11 @@ Eres el motor de Inteligencia Artificial especializado en Pricing, Análisis Com
 TU MISIÓN:
 Analizar la propuesta comercial (imagen o texto).
 Buscar en vivo en Internet usando tu herramienta Google Search para encontrar precios de la competencia en Argentina, diviendo la búsqueda en 2 niveles:
-1. Nacional (Top Retails, MercadoLibre y Oficiales): NO USES operadores "site:" gigantes (como site:a OR site:b) porque traban el motor de búsqueda. Haz búsquedas normales (Ej: "precio Freidora Smartlife 5L Argentina") y luego FILTRA TÚ MISMO los resultados. Para el reporte Nacional, SOLO PUEDES incluir: Mercado Libre, Frávega, Cetrogar, OnCity, Naldo, Musimundo, Pardo o Tiendas Oficiales de marcas. Si encuentras otros comercios, IGNÓRALOS.
-2. Regional (NUESTRO MERCADO PRINCIPAL Y VERDADERA COMPETENCIA): Limítate a la zona sur de Córdoba: Viamonte (C.P. X2671, Provincia de Córdoba - ¡ATENCIÓN! NO confundir con General Viamonte de Buenos Aires), La Cesira, Pueblo Italiano, Canals, Alejo Ledesma, Benjamin Gould, Arias, Laboulaye. Busca en: Casa Jae (Canals), San Miguel Center, Casa Diez, Petenatti Hogar, Casa Suita, Bringeri Laboulaye. Ten en cuenta que culturalmente el cliente de esta zona NO suele comprar a Buenos Aires, prefiere comprar en pueblos cercanos y retirar.
+1. Nacional (Top Retails, MercadoLibre y Oficiales): NO USES operadores "site:" gigantes. Haz una sola búsqueda normal (Ej: "precio Freidora Smartlife 5L Argentina") y filtra los resultados. SOLO PUEDES incluir: Mercado Libre, Frávega, Cetrogar, OnCity, Naldo, Musimundo, Pardo o Tiendas Oficiales.
+2. Regional (NUESTRO MERCADO PRINCIPAL): Busca en la zona sur de Córdoba (Casa Jae, San Miguel Center, Casa Diez, Petenatti Hogar, Casa Suita, Bringeri Laboulaye).
 
-REGLAS DE IDENTIFICACIÓN Y FILTRADO (¡CERO TOLERANCIA A INVENTOS!):
-- BÚSQUEDA DE SIMILARES (ESENCIAL): Si NO encuentras el modelo EXACTO (especialmente en el mercado Regional), es VITAL que busques y traigas el producto MÁS SIMILAR POSIBLE de la misma categoría (mismas especificaciones, tamaño, prestaciones). Queremos tener claridad de todo el mercado.
+REGLAS DE RENDIMIENTO Y VELOCIDAD (¡CRÍTICO!):
+- Tienes un límite de tiempo ESTRICTO de 20 segundos. NO realices más de 2 consultas a Google Search en total. Haz consultas amplias y procesa los resultados rápidamente. Si no encuentras algo de inmediato, asume que no hay stock y continúa. ¡Es mejor devolver datos incompletos que colgarte pensando!
 - ACLARACIÓN OBLIGATORIA: Si incluyes un producto que no es exactamente el modelo buscado, es OBLIGATORIO que lo aclares en el campo "notes" (Ej: "Modelo similar: Marca X Modelo Y - Mismas frigorías").
 - Descarta automáticamente precios que sean absurdamente bajos (ej. 40% más baratos que el promedio). Suelen ser repuestos, productos usados, o páginas desactualizadas.
 - OBLIGATORIO: Debes incluir el LINK REAL (URL) de donde sacaste el precio para que el usuario pueda verificarlo.
@@ -93,7 +93,7 @@ FORMATO DE SALIDA ESTRICTO EN JSON (sin markdown):
   });
 
   const controller = new AbortController();
-  const timeoutId = setTimeout(() => controller.abort(), 60000); // 60 seconds timeout
+  const timeoutId = setTimeout(() => controller.abort(), 28000); // 28 seconds timeout to beat 30s serverless limit
 
   try {
     const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`, {
@@ -107,10 +107,7 @@ FORMATO DE SALIDA ESTRICTO EN JSON (sin markdown):
         systemInstruction: {
           parts: [{ text: systemInstruction }]
         },
-        tools: [{ googleSearch: {} }],
-        generationConfig: {
-          temperature: 0.1
-        }
+        tools: [{ googleSearch: {} }]
       })
     });
 
@@ -154,9 +151,13 @@ FORMATO DE SALIDA ESTRICTO EN JSON (sin markdown):
 
   } catch (error: any) {
     console.error("Pricing Analysis Error:", error);
+    let errorMsg = error.message;
+    if (error.name === 'AbortError' || errorMsg.includes('aborted')) {
+      errorMsg = "La búsqueda en internet tomó demasiado tiempo y fue abortada. Intenta de nuevo con un término de búsqueda más corto.";
+    }
     return {
       success: false,
-      error: error.message
+      error: errorMsg
     };
   }
 }
