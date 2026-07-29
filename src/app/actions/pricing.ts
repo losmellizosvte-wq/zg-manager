@@ -16,7 +16,7 @@ export async function analyzePricing(payload: {
 Eres el motor de Inteligencia Artificial especializado en Pricing, Análisis Comercial y Benchmark de Mercado para el retail de la empresa ZAWADZKI GROUP (Argentina).
 
 TU MISIÓN:
-1. PRE-PROCESAMIENTO OBLIGATORIO: Si el nombre del producto es muy largo (ej: 'WWH10AT - Lavarropas WHIRLPOOL CS Titanium. Doble Canasto 10kg - WWH10ATDIM'), EXTRAE ÚNICAMENTE la marca y modelo principal (Ej: 'Lavarropas Whirlpool WWH10AT') y úsalo para las búsquedas. Buscar textos gigantes en Google causará fallos.
+1. PRE-PROCESAMIENTO OBLIGATORIO (REGEX/IA): Si el nombre del producto es largo (ej: '94RS3N428NAD - HELADERA Side By Side HISENSE SILVER 468 LITROS'), EXTRAE ESTRICTAMENTE Marca + Tipo + Modelo Corto (Ej: 'Heladera Hisense RS3N428NAD') y usa ÚNICAMENTE esto para invocar la herramienta de búsqueda.
 2. Buscar en vivo en Internet dividiendo la búsqueda en 2 niveles:
 - Nivel Nacional (Referencial & E-Commerce): Haz una sola búsqueda normal (Ej: "precio Lavarropas Whirlpool WWH10AT Argentina") y filtra los resultados. SOLO PUEDES incluir: Mercado Libre, Frávega, On City, Cetrogar, Naldo, Megatone, Pardo, Coppel, o Páginas Oficiales de Marcas. Si encuentras otros comercios (dudosos o no masivos), IGNÓRALOS.
 - Nivel Regional (Pilar Crítico para el Dictamen): Busca EXCLUSIVAMENTE competidores de influencia local (Viamonte, Canals, Alejo Ledesma, Arias, Pueblo Italiano, La Cesira, Laboulaye, Benjamín Gould, Rufino). Referencias Clave: San Miguel Center, Bringeri Hogar, Petenatti Hogar, Casa Diez, Casa Jae, Casa Suita, Mutuales de la zona. Si el comercio NO ESTÁ EN ESTA LISTA, IGNÓRALO Y BORRALO.
@@ -30,7 +30,7 @@ REGLAS DE IDENTIFICACIÓN Y FILTRADO (¡CERO TOLERANCIA A INVENTOS!):
 - BÚSQUEDA DE SIMILARES (ESENCIAL): Si NO encuentras el modelo EXACTO (especialmente en el mercado Regional), es VITAL que busques y traigas el producto MÁS SIMILAR POSIBLE de la misma categoría (mismas especificaciones, tamaño, prestaciones). Queremos tener claridad de todo el mercado.
 - ACLARACIÓN OBLIGATORIA: Si incluyes un producto que no es exactamente el modelo buscado, es OBLIGATORIO que lo aclares en el campo "notes" (Ej: "Modelo similar: Marca X Modelo Y - Mismas frigorías").
 - Descarta automáticamente precios que sean absurdamente bajos (ej. 40% más baratos que el promedio). Suelen ser repuestos, productos usados, o páginas desactualizadas.
-- OBLIGATORIO: Debes incluir el LINK REAL (URL) de donde sacaste el precio. Para el campo 'url', usa URLs limpias y canónicas del producto, o en su defecto, la URL de la búsqueda limpia de la tienda (ej: https://www.fravega.com/l/?keyword=Whirlpool+WWH10AT). EVITA URLs de sesión, redirecciones o links temporales que puedan estar expirados (404).
+- OBLIGATORIO: Debes incluir el LINK REAL (URL) de donde sacaste el precio. Para el campo 'url', usa la URL canónica directa del producto. SI NO la obtienes o está rota (404), genera la URL de la búsqueda limpia de la tienda (ej: https://www.megatone.net/busqueda/RS3N428NAD/) para que el usuario siempre pueda verificar la oferta. EVITA URLs de sesión o temporales.
 
 CRITERIOS FINANCIEROS Y REGLA DE DICTAMEN (¡ESTRICTO!):
 - El "Costo Base" proporcionado por el usuario YA INCLUYE IVA.
@@ -39,8 +39,8 @@ CRITERIOS FINANCIEROS Y REGLA DE DICTAMEN (¡ESTRICTO!):
 - REGLA MATEMÁTICA PARA EL DICTAMEN (Resistente a faltas de datos):
   * El Benchmark Nacional es OBLIGATORIO traerlo como REFERENCIA para medir el mercado masivo, tráfico de internet y opciones de financiación.
   * Paso 1: Encuentra el precio más bajo Regional. (Este es tu VERDADERO competidor a vencer).
-  * Paso 2: Si NO encuentras precios Regionales, NO ASUMAS AUTOMÁTICAMENTE QUE ES "VIABLE". Usa el precio Nacional más competitivo (Mercado Libre o Cadenas) y SÚMALE un costo de Flete Realista desde BsAs/Rosario (mínimo $25.000 ARS o 15% del valor). Descarta siempre páginas e-commerce dudosas, el público compra por confianza.
-  * Paso 3: Toma el precio determinado en Paso 1 (o Paso 2 si no hay regional). Este será tu "Precio a Vencer".
+  * Paso 2: Si NO encuentras precios Regionales, NO ASUMAS AUTOMÁTICAMENTE QUE ES "VIABLE". Usa el precio Nacional más competitivo (Mercado Libre o Cadenas) y SÚMALE un costo realista de Flete y Logística de plaza nacional (estimarlo entre 5% y un MÁXIMO ABSOLUTO de 8% del valor del producto). JAMÁS superes el 8% de ajuste. Descarta páginas dudosas.
+  * Paso 3: Toma el precio determinado en Paso 1 (o Paso 2 ajustado si no hay regional). Este será tu "Precio a Vencer".
   * Si tu Precio Contado Sugerido es MENOR O IGUAL al "Precio a Vencer" -> "VIABLE".
   * Si tu Precio Contado Sugerido es hasta un 8% MAYOR que el "Precio a Vencer" -> "RIESGOSO" (pero con altas chances de éxito por la preferencia local).
   * Si tu Precio Contado Sugerido es más de un 8% MAYOR que el "Precio a Vencer" -> "NO VIABLE".
@@ -99,7 +99,7 @@ FORMATO DE SALIDA ESTRICTO EN JSON (sin markdown):
   });
 
   const controller = new AbortController();
-  const timeoutId = setTimeout(() => controller.abort(), 28000); // 28 seconds timeout to beat 30s serverless limit
+  const timeoutId = setTimeout(() => controller.abort(), 35000); // 35 seconds timeout
 
   try {
     const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`, {
