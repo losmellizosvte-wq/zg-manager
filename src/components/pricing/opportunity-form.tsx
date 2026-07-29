@@ -78,18 +78,18 @@ export function OpportunityForm({ onAnalyze, isLoading }: OpportunityFormProps) 
       <CardContent className="pt-4">
         <form onSubmit={handleSubmit} className="space-y-4">
           
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="flex flex-col gap-4">
             <div className="space-y-2">
-              <Label className="text-xs text-slate-500">Producto / Modelo (Opcional si subes foto)</Label>
-              <Input 
-                placeholder="Ej: Lavarropas Codini AIAS4507BC" 
+              <Label className="text-xs text-slate-500">Producto / Modelo (Pega todo el texto largo aquí)</Label>
+              <textarea 
+                placeholder="Ej: Lavarropas Codini AIAS4507BC o pega todo el título largo de MercadoLibre..." 
                 value={productText}
                 onChange={e => setProductText(e.target.value)}
-                className="h-9"
+                className="flex min-h-[60px] w-full rounded-md border border-slate-200 bg-transparent px-3 py-2 text-sm shadow-sm placeholder:text-slate-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-blue-500 resize-y"
               />
             </div>
             
-            <div className="space-y-2">
+            <div className="space-y-2 md:w-1/2">
               <Label className="text-xs text-slate-500 font-semibold text-blue-700">Costo Base (IVA Incluido) *</Label>
               <div className="relative">
                 <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500">$</span>
