@@ -129,32 +129,32 @@ ${regionalBenchmark.map((b: any) => `- ${b.store}: ${formatCurrency(b.price)}`).
       </Card>
 
       {/* 2. Análisis Financiero */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 print:grid-cols-4 print:gap-2 print:break-inside-avoid">
-        <Card className="shadow-sm border-slate-200 print:shadow-none print:border-b">
-          <CardContent className="p-4 print:p-2 flex flex-col justify-center">
-            <span className="text-[10px] uppercase font-semibold text-slate-400">Costo Base (c/ IVA)</span>
-            <span className="text-xl font-bold text-slate-800 print:text-lg">{formatCurrency(financials?.baseCost)}</span>
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 print:grid-cols-4 print:gap-2 print:break-inside-avoid">
+        <Card className="shadow-sm border-slate-200 print:shadow-none print:border-b overflow-hidden">
+          <CardContent className="p-4 print:p-2 flex flex-col justify-center min-w-0">
+            <span className="text-[10px] uppercase font-semibold text-slate-400 truncate">Costo Base (c/ IVA)</span>
+            <span className="text-lg lg:text-xl font-bold text-slate-800 print:text-lg truncate block w-full" title={formatCurrency(financials?.baseCost)}>{formatCurrency(financials?.baseCost)}</span>
           </CardContent>
         </Card>
-        <Card className="shadow-sm border-slate-200 bg-slate-50 print:bg-white print:shadow-none print:border-b">
-          <CardContent className="p-4 print:p-2 flex flex-col justify-center">
-            <span className="text-[10px] uppercase font-semibold text-slate-500">Punto de Equilibrio</span>
-            <div className="flex items-end gap-2">
-                <span className="text-xl font-bold text-slate-700 print:text-lg">{formatCurrency(financials?.breakevenAmount)}</span>
-                <span className="text-[10px] text-slate-400 pb-1">(+{financials?.totalCostPercentage}%)</span>
+        <Card className="shadow-sm border-slate-200 bg-slate-50 print:bg-white print:shadow-none print:border-b overflow-hidden">
+          <CardContent className="p-4 print:p-2 flex flex-col justify-center min-w-0">
+            <span className="text-[10px] uppercase font-semibold text-slate-500 truncate">Punto de Equilibrio</span>
+            <div className="flex items-end gap-2 min-w-0">
+                <span className="text-lg lg:text-xl font-bold text-slate-700 print:text-lg truncate block" title={formatCurrency(financials?.breakevenAmount)}>{formatCurrency(financials?.breakevenAmount)}</span>
+                <span className="text-[10px] text-slate-400 pb-1 whitespace-nowrap">(+{financials?.totalCostPercentage}%)</span>
             </div>
           </CardContent>
         </Card>
-        <Card className="shadow-sm border-blue-200 bg-blue-50/30 print:bg-white print:shadow-none print:border-b">
-          <CardContent className="p-4 print:p-2 flex flex-col justify-center">
-            <span className="text-[10px] uppercase font-semibold text-blue-600">Precio Sugerido (Contado)</span>
-            <span className="text-2xl font-black text-blue-700 print:text-xl">{formatCurrency(financials?.suggestedCashPrice)}</span>
+        <Card className="shadow-sm border-blue-200 bg-blue-50/30 print:bg-white print:shadow-none print:border-b overflow-hidden">
+          <CardContent className="p-4 print:p-2 flex flex-col justify-center min-w-0">
+            <span className="text-[10px] uppercase font-semibold text-blue-600 truncate">Precio Sugerido (Contado)</span>
+            <span className="text-xl lg:text-2xl font-black text-blue-700 print:text-xl truncate block w-full" title={formatCurrency(financials?.suggestedCashPrice)}>{formatCurrency(financials?.suggestedCashPrice)}</span>
           </CardContent>
         </Card>
-        <Card className="shadow-sm border-emerald-200 bg-emerald-50/30 print:bg-white print:shadow-none print:border-b">
-          <CardContent className="p-4 print:p-2 flex flex-col justify-center">
-            <span className="text-[10px] uppercase font-semibold text-emerald-600">Margen Proyectado</span>
-            <span className="text-2xl font-black text-emerald-700 print:text-xl">{formatCurrency(financials?.projectedMarginAmount)}</span>
+        <Card className="shadow-sm border-emerald-200 bg-emerald-50/30 print:bg-white print:shadow-none print:border-b overflow-hidden">
+          <CardContent className="p-4 print:p-2 flex flex-col justify-center min-w-0">
+            <span className="text-[10px] uppercase font-semibold text-emerald-600 truncate">Margen Proyectado</span>
+            <span className="text-xl lg:text-2xl font-black text-emerald-700 print:text-xl truncate block w-full" title={formatCurrency(financials?.projectedMarginAmount)}>{formatCurrency(financials?.projectedMarginAmount)}</span>
           </CardContent>
         </Card>
       </div>
